@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PDV Anne</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#6b4226">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="PDV Anne">
+<style>
+:root{--bg:#faf7f2;--card:#fff;--ink:#2b211b;--mute:#7a6b60;--line:#e6ddd2;--acc:#6b4226;--acc-ink:#fff;--ok:#2f7d4f;--warn:#a86a10;--bad:#b3392f;--r:12px}
+@media (prefers-color-scheme:dark){:root{--bg:#1b1511;--card:#251d17;--ink:#f1e8de;--mute:#a8998b;--line:#3a2f27;--acc:#d9a86c;--acc-ink:#1b1511;--ok:#6fcf97;--warn:#e0b45c;--bad:#f08a80}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:720px;margin:0 auto;padding:16px 14px 90px}
+h1{font-size:1.3rem;margin:0 0 2px}
+.sub{color:var(--mute);margin:0 0 14px;font-size:.9rem}
+nav{display:flex;gap:6px;margin-bottom:14px}
+nav button{flex:1;padding:11px 6px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:var(--r);font:inherit;cursor:pointer}
+nav button[aria-selected=true]{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+section{display:none}section.on{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:12px}
+.card h2{font-size:1.05rem;margin:0 0 10px}
+label{display:block;font-size:.85rem;color:var(--mute);margin-bottom:3px}
+input,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.chip{padding:7px 14px;border:1px solid var(--line);border-radius:20px;background:var(--card);color:var(--ink);font:inherit;cursor:pointer}
+.chip.on{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+.itens{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+.it{min-height:68px;padding:8px;border:1px solid var(--line);border-radius:var(--r);background:var(--card);color:var(--ink);font:inherit;cursor:pointer;text-align:left}
+.it:active{background:var(--line)}
+.it b{display:block;font-size:.95rem;line-height:1.2}.it span{color:var(--mute);font-size:.85rem}
+button.b{padding:11px 14px;border-radius:8px;border:1px solid var(--acc);background:var(--acc);color:var(--acc-ink);font:inherit;cursor:pointer}
+button.g{padding:10px 14px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;cursor:pointer}
+button.x{padding:6px 10px;border:1px solid var(--line);background:transparent;color:var(--mute);border-radius:8px;cursor:pointer;font:inherit}
+.linha{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
+.linha .n{flex:1}.linha small{color:var(--mute)}
+.q{display:flex;align-items:center;gap:6px}.q button{width:34px;height:34px;padding:0}
+.total{display:flex;justify-content:space-between;align-items:baseline;font-size:1.4rem;font-weight:700;margin:10px 0}
+.pags{display:grid;gap:8px;grid-template-columns:1fr 1fr}
+.pags button{padding:14px 8px;font-size:1rem}
+.res{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-bottom:10px}
+.k{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.k small{display:block;color:var(--mute);font-size:.8rem}.k b{font-size:1.2rem}
+.ok{color:var(--ok)}.warn{color:var(--warn)}.bad{color:var(--bad)}
+.note{color:var(--mute);font-size:.85rem;margin:8px 0 0}
+.alert{border:1px solid var(--warn);color:var(--warn);border-radius:10px;padding:10px 12px;margin-bottom:12px}
+.alert.ok{border-color:var(--ok);color:var(--ok)}
+.form{display:grid;gap:8px;grid-template-columns:2fr 1fr;margin-bottom:8px}
+.form .full{grid-column:1/-1}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ok);color:#fff;padding:10px 18px;border-radius:20px;opacity:0;transition:opacity .2s;pointer-events:none}
+#toast.on{opacity:1}
+svg{width:100%;height:auto;display:block}
+</style>
+</head>
+<body>
+<main>
+  <h1>PDV Anne</h1>
+  <p class="sub">Toque no que vendeu, escolha o pagamento. O resto o app calcula. · protótipo</p>
+
+  <nav role="tablist">
+    <button data-tab="vender" aria-selected="true">Vender</button>
+    <button data-tab="hoje" aria-selected="false">Hoje</button>
+    <button data-tab="mes" aria-selected="false">Mês</button>
+    <button data-tab="itens" aria-selected="false">Itens</button>
+  </nav>
+
+  <section id="vender" class="on">
+    <div class="card">
+      <div class="chips" id="cats"></div>
+      <div class="itens" id="grade"></div>
+      <div class="form" style="margin-top:12px">
+        <div><label for="livre">Valor livre (R$)</label><input id="livre" inputmode="decimal" placeholder="ex: 24,90"></div>
+        <div style="align-self:end"><button class="g" style="width:100%" data-act="livre">Adicionar</button></div>
+      </div>
+      <p class="note">Valor livre serve para o que não está nos botões. Entra na categoria escolhida acima.</p>
+    </div>
+    <div class="card">
+      <h2>Venda atual</h2>
+      <div id="cart"></div>
+      <div class="total"><span>Total</span><span id="tot">R$ 0,00</span></div>
+      <div class="form">
+        <div><label for="recebido">Recebido em dinheiro (opcional)</label><input id="recebido" inputmode="decimal" placeholder="para calcular o troco"></div>
+        <div style="align-self:end"><b id="troco"></b></div>
+      </div>
+      <div class="pags">
+        <button class="b" data-pag="din">Dinheiro</button>
+        <button class="b" data-pag="pix">Pix</button>
+        <button class="b" data-pag="cre">Crédito</button>
+        <button class="b" data-pag="deb">Débito</button>
+      </div>
+      <div class="actions"><button class="g" data-act="limpar">Limpar venda</button></div>
+    </div>
+  </section>
+
+  <section id="hoje"></section>
+  <section id="mes"></section>
+
+  <section id="itens">
+    <div class="card">
+      <h2>Novo item</h2>
+      <div class="form">
+        <div class="full"><label for="inNome">Nome</label><input id="inNome" placeholder="ex: Café gelado"></div>
+        <div><label for="inPreco">Preço (R$)</label><input id="inPreco" inputmode="decimal"></div>
+        <div><label for="inCat">Categoria</label><select id="inCat"></select></div>
+      </div>
+      <button class="b" data-act="addItem">Adicionar item</button>
+      <p class="note">Os itens abaixo são de exemplo. Apague e cadastre os da loja.</p>
+    </div>
+    <div class="card">
+      <h2>Nova categoria</h2>
+      <div class="form"><input id="inNovaCat" placeholder="ex: Utilidades"><button class="b" data-act="addCat">Criar</button></div>
+      <div id="listaCats"></div>
+    </div>
+    <div class="card"><h2>Itens cadastrados</h2><div id="listaItens"></div></div>
+    <div class="card">
+      <h2>Metas e dados</h2>
+      <div class="form">
+        <div><label for="cfMeta">Meta do mês (R$) — zero a zero</label><input id="cfMeta" inputmode="decimal"></div>
+        <div><label for="cfDias">Dias abertos no mês</label><input id="cfDias" inputmode="numeric"></div>
+      </div>
+      <div class="actions">
+        <button class="g" data-act="csv">Baixar vendas (CSV)</button>
+        <button class="g" data-act="json">Backup (JSON)</button>
+      </div>
+      <p class="note">Os dados ficam só neste aparelho. Faça o backup de vez em quando.</p>
+    </div>
+  </section>
+</main>
+<div id="toast"></div>
+
+<script>
+const KEY = 'anne_pdv_v1';
+const PAGS = [{k:'din', n:'Dinheiro'}, {k:'pix', n:'Pix'}, {k:'cre', n:'Crédito'}, {k:'deb', n:'Débito'}];
+const padrao = () => ({
+  cats: ['Bebidas', 'Doces', 'Empório'],
+  itens: [
+    {id:'a1', n:'Café gelado', p:'15', c:'Bebidas'},
+    {id:'a2', n:'Cappuccino', p:'12', c:'Bebidas'},
+    {id:'a3', n:'Água', p:'4', c:'Bebidas'},
+    {id:'a4', n:'Bolo (fatia)', p:'10', c:'Doces'},
+    {id:'a5', n:'Brigadeiro', p:'4', c:'Doces'},
+    {id:'a6', n:'Geleia', p:'22', c:'Empório'}
+  ],
+  vendas: [], meta: '5200', dias: '26'
+});
+let S;
+try { S = Object.assign(padrao(), JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { S = padrao(); }
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num = v => { const n = parseFloat(String(v ?? '').trim().replace(',', '.')); return isFinite(n) ? n : 0; };
+const brl = n => (isFinite(n) ? n : 0).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
+const iso = d => new Date(d - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+const hoje = () => iso(new Date());
+const uid = () => 'v' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const k = (t, v, c='') => `<div class="k"><small>${t}</small><b class="${c}">${v}</b></div>`;
+const pagNome = key => (PAGS.find(p => p.k === key) || {}).n || key;
+
+const st = {cat: null, cart: []};
+const cartTotal = () => st.cart.reduce((t, l) => t + l.preco * l.qtd, 0);
+
+function toast(msg){ const t = $('toast'); t.textContent = msg; t.classList.add('on'); setTimeout(() => t.classList.remove('on'), 1400); }
+
+/* ---------- abas ---------- */
+document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('nav button').forEach(x => x.setAttribute('aria-selected', x === b));
+  document.querySelectorAll('section').forEach(s => s.classList.toggle('on', s.id === b.dataset.tab));
+  render();
+});
+
+/* ---------- vender ---------- */
+function renderVender(){
+  if (!S.cats.includes(st.cat)) st.cat = S.cats[0] || null;
+  $('cats').innerHTML = S.cats.map(c => `<button class="chip ${c === st.cat ? 'on' : ''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('');
+  const lista = S.itens.filter(i => i.c === st.cat);
+  $('grade').innerHTML = lista.length
+    ? lista.map(i => `<button class="it" data-item="${esc(i.id)}"><b>${esc(i.n)}</b><span>${brl(num(i.p))}</span></button>`).join('')
+    : '<p class="note">Sem itens nesta categoria. Cadastre na aba Itens ou use o valor livre.</p>';
+  renderCart();
+}
+function renderCart(){
+  $('cart').innerHTML = st.cart.length ? st.cart.map((l, i) => `
+    <div class="linha"><div class="n">${esc(l.nome)}<br><small>${brl(l.preco)}</small></div>
+      <div class="q"><button class="x" data-dec="${i}">−</button><b>${l.qtd}</b><button class="x" data-inc="${i}">+</button></div>
+      <b>${brl(l.preco * l.qtd)}</b></div>`).join('') : '<p class="note">Toque nos itens para montar a venda.</p>';
+  $('tot').textContent = brl(cartTotal());
+  const rec = num($('recebido').value), t = cartTotal();
+  $('troco').innerHTML = rec > 0 && t > 0 ? (rec >= t ? `Troco: <span class="ok">${brl(rec - t)}</span>` : `<span class="bad">Falta ${brl(t - rec)}</span>`) : '';
+}
+function addCart(id, nome, preco){
+  const l = st.cart.find(x => x.id === id);
+  if (l) l.qtd++; else st.cart.push({id, nome, preco, qtd: 1});
+  renderCart();
+}
+function finalizar(pag){
+  if (!st.cart.length) return toast('Venda vazia');
+  const agora = new Date();
+  S.vendas.push({id: uid(), data: hoje(), hora: agora.toTimeString().slice(0, 5), pag, total: cartTotal(),
+    itens: st.cart.map(l => ({nome: l.nome, preco: l.preco, qtd: l.qtd}))});
+  save(); st.cart = []; $('recebido').value = '';
+  toast('Venda registrada · ' + pagNome(pag)); renderCart();
+}
+
+/* ---------- hoje ---------- */
+function renderHoje(){
+  const vs = S.vendas.filter(v => v.data === hoje());
+  const tot = vs.reduce((t, v) => t + v.total, 0);
+  const porPag = PAGS.map(p => ({n: p.n, v: vs.filter(v => v.pag === p.k).reduce((t, v) => t + v.total, 0)}));
+  $('hoje').innerHTML = `
+    <div class="card"><h2>Hoje</h2>
+      <div class="res">${k('Vendido', brl(tot))}${k('Vendas', vs.length)}${k('Ticket médio', brl(vs.length ? tot / vs.length : 0))}</div>
+      <div class="res">${porPag.map(p => k(p.n, brl(p.v))).join('')}</div>
+    </div>
+    <div class="card"><h2>Últimas vendas</h2>
+      ${vs.length ? vs.slice().reverse().map(v => `
+        <div class="linha"><div class="n"><b>${brl(v.total)}</b> · ${esc(pagNome(v.pag))} · ${esc(v.hora)}<br>
+          <small>${v.itens.map(i => esc(i.qtd + '× ' + i.nome)).join(', ')}</small></div>
+          <button class="x" data-del="${esc(v.id)}">Desfazer</button></div>`).join('') : '<p class="note">Nenhuma venda hoje ainda.</p>'}
+    </div>`;
+}
+
+/* ---------- mês ---------- */
+function svgDias(dias, diaMeta, ult){
+  const W = 640, H = 200, pl = 8, pr = 8, pt = 14, pb = 24;
+  const mx = Math.max(diaMeta, ...dias, 1) * 1.1, bw = (W - pl - pr) / ult;
+  const yy = v => pt + (H - pt - pb) * (1 - v / mx);
+  const bars = dias.slice(0, ult).map((v, i) => `<rect x="${pl + i * bw + 1}" y="${yy(v)}" width="${Math.max(bw - 2, 1)}" height="${H - pb - yy(v)}" rx="2" style="fill:var(--acc)"/>`).join('');
+  const labs = dias.slice(0, ult).map((_, i) => (i + 1) % 5 === 0 || i === 0 ? `<text x="${pl + i * bw + bw / 2}" y="${H - 8}" text-anchor="middle" style="fill:var(--mute);font-size:10px">${i + 1}</text>` : '').join('');
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Vendas por dia do mês">${bars}${labs}
+    <line x1="${pl}" x2="${W - pr}" y1="${yy(diaMeta)}" y2="${yy(diaMeta)}" stroke="var(--warn)" stroke-dasharray="5 4"/>
+    <text x="${W - pr}" y="${yy(diaMeta) - 4}" text-anchor="end" style="fill:var(--warn);font-size:10px">meta por dia ${brl(diaMeta)}</text></svg>`;
+}
+function renderMes(){
+  const h = new Date(), mes = iso(h).slice(0, 7), ult = h.getDate();
+  const dias = Array(31).fill(0);
+  S.vendas.filter(v => v.data.slice(0, 7) === mes).forEach(v => dias[+v.data.slice(8) - 1] += v.total);
+  const tot = dias.reduce((a, b) => a + b, 0), comVenda = dias.filter(x => x > 0).length;
+  const meta = num(S.meta), dAb = Math.max(num(S.dias), 1);
+  const media = comVenda ? tot / comVenda : 0, proj = media * dAb;
+  const falta = Math.max(meta - tot, 0), restam = Math.max(dAb - comVenda, 0);
+  const bate = proj >= meta;
+  $('mes').innerHTML = `
+    <div class="card"><h2>Como está o mês</h2>
+      ${comVenda ? `<div class="alert ${bate ? 'ok' : ''}">${bate
+        ? `Seguindo nesse ritmo, o mês fecha em ${brl(proj)}. Meta batida.`
+        : `Seguindo nesse ritmo, o mês fecha em ${brl(proj)}, abaixo da meta de ${brl(meta)}. Faltam ${brl(falta)}${restam ? ` (cerca de ${brl(falta / restam)} por dia nos dias que restam)` : ''}.`}</div>` : '<p class="note">Sem vendas neste mês ainda.</p>'}
+      <div class="res">${k('Vendido no mês', brl(tot))}${k('Média por dia com venda', brl(media))}${k('Projeção do mês', brl(proj), comVenda ? (bate ? 'ok' : 'warn') : '')}${k('Meta do mês', brl(meta))}</div>
+      <div class="bar" style="height:10px;background:var(--line);border-radius:6px;overflow:hidden"><i style="display:block;height:100%;width:${Math.min(meta ? tot / meta * 100 : 0, 100)}%;background:var(--acc)"></i></div>
+      <p class="note">${meta ? Math.round(tot / meta * 100) : 0}% da meta. Projeção = média dos dias com venda × dias abertos.</p>
+    </div>
+    <div class="card"><h2>Vendas por dia</h2>${svgDias(dias, meta / dAb, ult)}</div>`;
+}
+
+/* ---------- itens ---------- */
+function renderItens(){
+  $('inCat').innerHTML = S.cats.map(c => `<option>${esc(c)}</option>`).join('');
+  $('listaCats').innerHTML = S.cats.map(c => `<div class="linha"><span class="n">${esc(c)}</span><button class="x" data-delcat="${esc(c)}">Remover</button></div>`).join('');
+  $('listaItens').innerHTML = S.itens.length ? S.itens.map(i => `
+    <div class="linha"><div class="n">${esc(i.n)}<br><small>${esc(i.c)} · ${brl(num(i.p))}</small></div>
+    <button class="x" data-delitem="${esc(i.id)}">Remover</button></div>`).join('') : '<p class="note">Nenhum item.</p>';
+  $('cfMeta').value = S.meta; $('cfDias').value = S.dias;
+}
+
+function render(){
+  const on = document.querySelector('section.on').id;
+  ({vender: renderVender, hoje: renderHoje, mes: renderMes, itens: renderItens})[on]();
+}
+
+/* ---------- baixar ---------- */
+function baixa(nome, conteudo, tipo){
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([conteudo], {type: tipo}));
+  a.download = nome; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+const csvCell = s => '"' + String(s).replace(/"/g, '""') + '"';
+
+/* ---------- cliques ---------- */
+document.addEventListener('click', e => {
+  const t = e.target.closest('button'); if (!t) return;
+  const d = t.dataset;
+  if (d.cat !== undefined) { st.cat = d.cat; renderVender(); }
+  else if (d.item) { const i = S.itens.find(x => x.id === d.item); if (i) addCart(i.id, i.n, num(i.p)); }
+  else if (d.inc !== undefined) { st.cart[+d.inc].qtd++; renderCart(); }
+  else if (d.dec !== undefined) { const l = st.cart[+d.dec]; if (--l.qtd <= 0) st.cart.splice(+d.dec, 1); renderCart(); }
+  else if (d.pag) finalizar(d.pag);
+  else if (d.del) { if (confirm('Desfazer esta venda?')) { S.vendas = S.vendas.filter(v => v.id !== d.del); save(); renderHoje(); } }
+  else if (d.delitem) { S.itens = S.itens.filter(i => i.id !== d.delitem); save(); renderItens(); }
+  else if (d.delcat) {
+    if (S.itens.some(i => i.c === d.delcat)) return toast('Tem itens nesta categoria');
+    S.cats = S.cats.filter(c => c !== d.delcat); save(); renderItens();
+  }
+  else if (d.act === 'livre') {
+    const v = num($('livre').value); if (v <= 0) return toast('Digite um valor');
+    addCart('livre-' + v + '-' + st.cat, 'Outros (' + (st.cat || 'sem categoria') + ')', v); $('livre').value = '';
+  }
+  else if (d.act === 'limpar') { st.cart = []; $('recebido').value = ''; renderCart(); }
+  else if (d.act === 'addItem') {
+    const n = $('inNome').value.trim(), p = num($('inPreco').value);
+    if (!n || p <= 0 || !S.cats.length) return toast('Preencha nome, preço e categoria');
+    S.itens.push({id: uid(), n, p: String(p), c: $('inCat').value}); save();
+    $('inNome').value = ''; $('inPreco').value = ''; renderItens(); toast('Item adicionado');
+  }
+  else if (d.act === 'addCat') {
+    const c = $('inNovaCat').value.trim();
+    if (!c || S.cats.includes(c)) return toast('Nome inválido ou já existe');
+    S.cats.push(c); save(); $('inNovaCat').value = ''; renderItens();
+  }
+  else if (d.act === 'csv') {
+    const linhas = ['data;hora;pagamento;total;itens'].concat(S.vendas.map(v =>
+      [v.data, v.hora, pagNome(v.pag), String(v.total).replace('.', ','), csvCell(v.itens.map(i => i.qtd + 'x ' + i.nome).join(' | '))].join(';')));
+    baixa('vendas-pdv.csv', '﻿' + linhas.join('\n'), 'text/csv');
+  }
+  else if (d.act === 'json') baixa('backup-pdv-' + hoje() + '.json', JSON.stringify(S, null, 2), 'application/json');
+});
+$('recebido').oninput = renderCart;
+$('cfMeta').oninput = e => { S.meta = e.target.value; save(); };
+$('cfDias').oninput = e => { S.dias = e.target.value; save(); };
+
+render();
+
+if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
