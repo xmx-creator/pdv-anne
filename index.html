@@ -140,7 +140,7 @@ var COLS = ['produtos','vendas','config','historico'];
 var CONFIG0 = { fixos:[], proLabore:0, diasOperacao:30, taxas:{pix:0, din:0, deb:1.5, cre:1.5}, margemRef:35, tetoMei:81000 };
 
 var S = { produtos:{}, vendas:{}, config:{}, historico:{}, carregou:{}, aba:'hoje', dia:hoje(), mes:hoje().slice(0, 7),
-          pag:'pix', cat:'Todos', busca:'', pCat:'Todos', pBusca:'', ed:null, modo:'carregando' };
+          pag:'pix', cat:'Todos', busca:'', pCat:'Todos', pBusca:'', ed:null, modo:'carregando', compra:0, rec:'' };
 
 /* ---------- aviso ---------- */
 var toastT;
@@ -256,6 +256,23 @@ function svgDias(dias, zzDia, plDia){
 function chipsCat(atual, acao){
   return '<div class="chips">' + ['Todos'].concat(CATS).map(function (c) { return '<button class="chip" data-act="' + acao + '" data-v="' + esc(c) + '" aria-pressed="' + (atual === c) + '">' + esc(c) + '</button>'; }).join('') + '</div>';
 }
+/* ---------- troco: soma o que foi tocado e calcula o que devolver ---------- */
+function campo(v){ return v ? String(+num(v).toFixed(2)).replace('.', ',') : ''; }
+function trocoCard(){
+  return '<div class="card" id="trbox"><h2>Troco</h2>' +
+    '<div class="grid"><div><label for="tr-compra">Valor da compra (R$)</label><input id="tr-compra" type="text" inputmode="decimal" value="' + esc(campo(S.compra)) + '" data-f="trCompra"></div>' +
+    '<div><label for="tr-rec">Cliente deu (R$)</label><input id="tr-rec" type="text" inputmode="decimal" value="' + esc(S.rec) + '" data-f="trRec"></div></div>' +
+    '<div class="kpis" style="margin-top:10px"><div class="kpi"><small>Troco</small><b id="tr-res">–</b></div></div>' +
+    '<div class="row" style="margin-top:10px"><button class="btn sec" data-act="novaCompra">Nova compra</button></div>' +
+    '<p class="nota">O valor da compra soma os produtos em que você toca. Se precisar, corrija aqui. Toque em Nova compra quando terminar o atendimento.</p></div>';
+}
+function atualizaTroco(){
+  var c = num(S.compra), r = num(S.rec), el = document.getElementById('tr-res'), top = document.getElementById('tr-top');
+  if (top) top.textContent = brl(c);
+  if (!el) return;
+  if (c > 0 && r > 0) { el.textContent = r >= c ? brl(r - c) : 'Falta ' + brl(c - r); el.className = r >= c ? 'ok' : 'bad'; }
+  else { el.textContent = '–'; el.className = ''; }
+}
 function vHoje(){
   var d = S.dia, doc = S.vendas[d] || { linhas:[], folga:false, obs:'' }, T = totDia(doc), lista = prodLista();
   var q = {}; (doc.linhas || []).forEach(function (l) { q[l.pid] = (q[l.pid] || 0) + num(l.qtd); });
@@ -279,8 +296,10 @@ function vHoje(){
          '<div class="pills" role="group" aria-label="Forma de pagamento">' + PAGS.map(function (p) { return '<button class="pill" data-act="pag" data-v="' + p[0] + '" aria-pressed="' + (S.pag === p[0]) + '">' + p[1] + '</button>'; }).join('') + '</div>' +
          '<div style="margin:10px 0 8px"><input type="search" id="busca" placeholder="Buscar produto" value="' + esc(S.busca) + '" data-f="busca" aria-label="Buscar produto"></div>' +
          chipsCat(S.cat, 'cat') +
+         '<p class="nota" style="margin:10px 0 0">Compra atual: <b id="tr-top">' + brl(S.compra) + '</b></p>' +
          '<div class="prods" style="margin-top:10px" id="prods">' + gradeProd(vis, q) + '</div></div>';
   }
+  h += trocoCard();
   h += '<div class="card"><h2>Vendas do dia</h2>' + ((doc.linhas || []).length ? (doc.linhas || []).map(function (l) {
     var t = linhaT(l);
     return '<div class="linha"><div class="nm">' + esc(l.nome) + (l.est ? '<span class="tag">custo estimado</span>' : '') + '<small>' + esc(l.cat || '') + ' · ' + brl(num(l.preco)) + ' cada</small></div><div class="tot">' + brl(t.rec) + '</div>' +
@@ -490,6 +509,7 @@ function render(){
   $('#app').innerHTML = h;
   if (S.aba === 'produtos' && S.ed) atualizaEd();
   if (S.aba === 'preco') atualizaPr();
+  if (S.aba === 'hoje') atualizaTroco();
   window.scrollTo(st.x, st.y);
 }
 document.addEventListener('focusout', function () { if (pendRender) setTimeout(function () { if (pendRender) agendaRender(); }, 60); });
@@ -501,6 +521,7 @@ function vende(id){
   var p = S.produtos[id]; if (!p) return; var doc = docDia();
   var ex = doc.linhas.filter(function (l) { return l.pid === id && l.pag === S.pag && num(l.preco) === num(p.preco) && num(l.custo) === num(p.custo); })[0];
   if (ex) ex.qtd = num(ex.qtd) + 1; else doc.linhas.push({ id:uid(), pid:id, nome:p.nome, cat:p.cat || '', qtd:1, preco:num(p.preco), custo:num(p.custo), pag:S.pag, est:!p.custoReal });
+  S.compra = num(S.compra) + num(p.preco);
   gravaDia(); render();
 }
 function novoEd(p){
@@ -553,6 +574,7 @@ document.addEventListener('click', function (ev) {
   var act = b.dataset.act, v = b.dataset.v, id = b.dataset.id, doc, i;
   if (act === 'aba') { S.aba = v; S.ed = null; render(); window.scrollTo(0, 0); return; }
   if (act === 'pag') { S.pag = v; render(); return; }
+  if (act === 'novaCompra') { S.compra = 0; S.rec = ''; render(); return; }
   if (act === 'cat') { S.cat = v; render(); return; }
   if (act === 'pcat') { S.pCat = v; render(); return; }
   if (act === 'dia') { S.dia = v === 'hoje' ? hoje() : iso(new Date(new Date(S.dia + 'T12:00:00').getTime() + (+v) * 86400000)); render(); return; }
@@ -564,6 +586,7 @@ document.addEventListener('click', function (ev) {
     var nome = ($('#av-nome').value || '').trim(), preco = num($('#av-preco').value), qtd = num($('#av-qtd').value) || 1, cs = $('#av-custo').value.trim();
     if (!nome || preco <= 0) { avisar('Informe o nome e o preço.'); return; }
     doc = docDia(); doc.linhas.push({ id:uid(), pid:'', nome:nome, cat:'Outros', qtd:qtd, preco:preco, custo:cs ? num(cs) : +(preco * 0.5).toFixed(2), pag:S.pag, est:!cs });
+    S.compra = num(S.compra) + preco * qtd;
     gravaDia(); render(); avisar('Venda adicionada.'); return; }
   if (act === 'novoProd') { novoEd(null); render(); return; }
   if (act === 'editaProd') { var p = S.produtos[id]; if (!p) return; novoEd(Object.assign({ id:id }, p)); render(); var el = document.getElementById('editor'); if (el) el.scrollIntoView({ block:'center' }); return; }
@@ -595,6 +618,7 @@ document.addEventListener('click', function (ev) {
 });
 document.addEventListener('input', function (ev) {
   var t = ev.target;
+  if (t.dataset.f === 'trCompra' || t.dataset.f === 'trRec') { if (t.dataset.f === 'trCompra') S.compra = num(t.value); else S.rec = t.value; atualizaTroco(); return; }
   if (t.dataset.f === 'busca') { S.busca = t.value; var doc = S.vendas[S.dia] || { linhas:[] }, q = {}; (doc.linhas || []).forEach(function (l) { q[l.pid] = (q[l.pid] || 0) + num(l.qtd); });
     var b = norm(S.busca); $('#prods').innerHTML = gradeProd(prodLista().filter(function (p) { return p.ativo !== false && (S.cat === 'Todos' || p.cat === S.cat) && (!b || norm(p.nome).indexOf(b) >= 0); }), q); return; }
   if (t.dataset.f === 'pBusca') { S.pBusca = t.value; clearTimeout(rt); rt = setTimeout(function () { var pos = t.selectionStart; render(); var n = $('#pbusca'); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (e) {} } }, 200); return; }
