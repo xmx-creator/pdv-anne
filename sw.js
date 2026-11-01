@@ -1,5 +1,5 @@
 // Troque o número da versão sempre que mudar o index.html, para o celular pegar a novidade.
-const VERSAO = 'anne-patisserie-v2';
+const VERSAO = 'anne-patisserie-v3';
 const ARQUIVOS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 // As fontes do Google também ficam guardadas, para a tela ter o mesmo visual sem internet.
 const FONTES = ['fonts.googleapis.com', 'fonts.gstatic.com'];
