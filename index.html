@@ -2,332 +2,637 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PDV Anne</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Anne Patisserie</title>
+<meta name="theme-color" content="#8B2A24">
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#6b4226">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="PDV Anne">
+<meta name="apple-mobile-web-app-title" content="Anne Patisserie">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:wght@400;500;700&display=swap">
 <style>
-:root{--bg:#faf7f2;--card:#fff;--ink:#2b211b;--mute:#7a6b60;--line:#e6ddd2;--acc:#6b4226;--acc-ink:#fff;--ok:#2f7d4f;--warn:#a86a10;--bad:#b3392f;--r:12px}
-@media (prefers-color-scheme:dark){:root{--bg:#1b1511;--card:#251d17;--ink:#f1e8de;--mute:#a8998b;--line:#3a2f27;--acc:#d9a86c;--acc-ink:#1b1511;--ok:#6fcf97;--warn:#e0b45c;--bad:#f08a80}}
+/* Paleta da loja (creme e vinho do cartão da Anne). Layout: app de balcão, 4 abas, números grandes, cor só onde há decisão. */
+:root{
+  --bg:#FAF1DC; --card:#FFFBF2; --ink:#2B1A17; --mute:#75605A; --line:#E6D6B8; --chip:#F1E3C6;
+  --acc:#8B2A24; --acc-ink:#FFF6EA; --ok:#2C7A49; --warn:#A5640B; --bad:#B3261E; --ok-bg:#E1F0E4; --warn-bg:#F7E8C8; --bad-bg:#F7DAD6;
+  --fd:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif; --fb:"DM Sans","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1B1210; --card:#261A17; --ink:#F4E8DA; --mute:#B8A396; --line:#3B2A25; --chip:#33231F;
+  --acc:#E58277; --acc-ink:#2A1210; --ok:#74D19A; --warn:#E7B85F; --bad:#F59A90; --ok-bg:#1E3626; --warn-bg:#3A2E15; --bad-bg:#40201C; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1B1210; --card:#261A17; --ink:#F4E8DA; --mute:#B8A396; --line:#3B2A25; --chip:#33231F;
+  --acc:#E58277; --acc-ink:#2A1210; --ok:#74D19A; --warn:#E7B85F; --bad:#F59A90; --ok-bg:#1E3626; --warn-bg:#3A2E15; --bad-bg:#40201C; color-scheme:dark}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-main{max-width:720px;margin:0 auto;padding:16px 14px 90px}
-h1{font-size:1.3rem;margin:0 0 2px}
-.sub{color:var(--mute);margin:0 0 14px;font-size:.9rem}
-nav{display:flex;gap:6px;margin-bottom:14px}
-nav button{flex:1;padding:11px 6px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:var(--r);font:inherit;cursor:pointer}
-nav button[aria-selected=true]{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
-section{display:none}section.on{display:block}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:12px}
-.card h2{font-size:1.05rem;margin:0 0 10px}
-label{display:block;font-size:.85rem;color:var(--mute);margin-bottom:3px}
-input,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
-.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
-.chip{padding:7px 14px;border:1px solid var(--line);border-radius:20px;background:var(--card);color:var(--ink);font:inherit;cursor:pointer}
-.chip.on{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
-.itens{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
-.it{min-height:68px;padding:8px;border:1px solid var(--line);border-radius:var(--r);background:var(--card);color:var(--ink);font:inherit;cursor:pointer;text-align:left}
-.it:active{background:var(--line)}
-.it b{display:block;font-size:.95rem;line-height:1.2}.it span{color:var(--mute);font-size:.85rem}
-button.b{padding:11px 14px;border-radius:8px;border:1px solid var(--acc);background:var(--acc);color:var(--acc-ink);font:inherit;cursor:pointer}
-button.g{padding:10px 14px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--ink);font:inherit;cursor:pointer}
-button.x{padding:6px 10px;border:1px solid var(--line);background:transparent;color:var(--mute);border-radius:8px;cursor:pointer;font:inherit}
-.linha{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--line)}
-.linha .n{flex:1}.linha small{color:var(--mute)}
-.q{display:flex;align-items:center;gap:6px}.q button{width:34px;height:34px;padding:0}
-.total{display:flex;justify-content:space-between;align-items:baseline;font-size:1.4rem;font-weight:700;margin:10px 0}
-.pags{display:grid;gap:8px;grid-template-columns:1fr 1fr}
-.pags button{padding:14px 8px;font-size:1rem}
-.res{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-bottom:10px}
-.k{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
-.k small{display:block;color:var(--mute);font-size:.8rem}.k b{font-size:1.2rem}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:15px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 96px}
+h1,h2,h3{font-family:var(--fd);margin:0;letter-spacing:-.01em;text-wrap:balance}
+.topo{max-width:960px;margin:0 auto;padding:18px 0 10px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.topo h1{font-size:26px;font-weight:800;color:var(--acc)}
+.topo small{display:block;color:var(--mute);font-size:13px}
+.modo{font-size:12px;padding:4px 10px;border-radius:99px;background:var(--chip);color:var(--mute)}
+.modo.nuvem{background:var(--ok-bg);color:var(--ok)}.modo.local{background:var(--ok-bg);color:var(--ok)}
+.wrap{max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;min-width:0}
+.card h2{font-size:18px;font-weight:600;margin-bottom:8px}
+.card h3{font-size:15px;font-weight:600;margin:0 0 6px}
+.nota{color:var(--mute);font-size:13px;margin:6px 0 0}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(138px,1fr));gap:10px}
+.kpi{background:var(--chip);border-radius:12px;padding:10px 12px;min-width:0}
+.kpi small{display:block;color:var(--mute);font-size:12px}
+.kpi b{font-family:var(--fd);font-size:21px;font-weight:700;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
 .ok{color:var(--ok)}.warn{color:var(--warn)}.bad{color:var(--bad)}
-.note{color:var(--mute);font-size:.85rem;margin:8px 0 0}
-.alert{border:1px solid var(--warn);color:var(--warn);border-radius:10px;padding:10px 12px;margin-bottom:12px}
-.alert.ok{border-color:var(--ok);color:var(--ok)}
-.form{display:grid;gap:8px;grid-template-columns:2fr 1fr;margin-bottom:8px}
-.form .full{grid-column:1/-1}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ok);color:#fff;padding:10px 18px;border-radius:20px;opacity:0;transition:opacity .2s;pointer-events:none}
-#toast.on{opacity:1}
-svg{width:100%;height:auto;display:block}
+.alert{border-radius:12px;padding:10px 12px;font-size:14px;background:var(--warn-bg);color:var(--warn)}
+.alert.bom{background:var(--ok-bg);color:var(--ok)}.alert.ruim{background:var(--bad-bg);color:var(--bad)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row>*{min-width:0}
+.pills,.chips{display:flex;gap:6px;flex-wrap:wrap}
+button{font:inherit;color:inherit;cursor:pointer}
+.pill,.chip{border:1px solid var(--line);background:var(--card);border-radius:99px;padding:8px 14px;min-height:40px}
+.chip{padding:5px 12px;min-height:34px;font-size:13px;background:var(--chip);border-color:transparent}
+.pill[aria-pressed="true"],.chip[aria-pressed="true"]{background:var(--acc);color:var(--acc-ink);border-color:var(--acc)}
+.btn{border:0;background:var(--acc);color:var(--acc-ink);border-radius:10px;padding:10px 16px;font-weight:700;min-height:42px}
+.btn.sec{background:var(--chip);color:var(--ink);font-weight:500}
+.btn.perigo{background:var(--bad);color:#fff}
+.btn.peq{padding:6px 10px;min-height:34px;font-size:13px}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+label{display:block;font-size:12px;color:var(--mute);margin-bottom:3px}
+input,select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 10px;min-height:42px}
+input[type=checkbox]{width:20px;height:20px;min-height:0;accent-color:var(--acc)}
+textarea{min-height:60px;resize:vertical}
+.grid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+.prods{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.prod{position:relative;text-align:left;border:1px solid var(--line);background:var(--card);border-radius:12px;padding:10px 12px;min-height:74px;display:flex;flex-direction:column;justify-content:space-between;gap:4px}
+.prod b{font-weight:500;font-size:14px;overflow-wrap:anywhere}
+.prod span{font-family:var(--fd);font-weight:700;font-size:17px;font-variant-numeric:tabular-nums}
+.prod i{position:absolute;top:8px;right:8px;min-width:22px;height:22px;border-radius:99px;background:var(--acc);color:var(--acc-ink);font-style:normal;font-size:12px;font-weight:700;display:grid;place-items:center;padding:0 6px}
+.prod:active{transform:scale(.98)}
+.linha{display:grid;grid-template-columns:1fr auto;gap:6px 10px;padding:10px 0;border-top:1px solid var(--line)}
+.linha:first-child{border-top:0}
+.linha .nm{font-weight:500;overflow-wrap:anywhere}.linha .nm small{display:block;color:var(--mute);font-weight:400}
+.linha .tot{font-family:var(--fd);font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+.ctl{display:flex;gap:6px;align-items:center;grid-column:1/-1;flex-wrap:wrap}
+.ctl select{width:auto;min-height:36px;padding:4px 8px}
+.step{display:flex;align-items:center;gap:2px}
+.step button{width:36px;height:36px;border-radius:9px;border:1px solid var(--line);background:var(--card);font-size:18px;line-height:1}
+.step span{min-width:30px;text-align:center;font-weight:700}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line);white-space:nowrap;font-variant-numeric:tabular-nums}
+th{color:var(--mute);font-weight:500;font-size:12px}
+td.n,th.n{text-align:right}
+.bar{height:10px;background:var(--chip);border-radius:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--acc);border-radius:6px}
+.bar.ok i{background:var(--ok)}
+.pr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;padding:9px 0;border-top:1px solid var(--line)}
+.pr:first-child{border-top:0}
+.pr .a{font-weight:500;overflow-wrap:anywhere;text-align:left;background:none;border:0;padding:0}
+.pr .b{font-variant-numeric:tabular-nums;text-align:right;font-weight:700}
+.pr .c{grid-column:1/-1;display:flex;gap:10px;align-items:center;color:var(--mute);font-size:13px}
+.pr .c .bar{flex:1}
+.tag{display:inline-block;font-size:11px;border-radius:99px;padding:2px 8px;background:var(--warn-bg);color:var(--warn);margin-left:6px;font-weight:500}
+.tag.ok{background:var(--ok-bg);color:var(--ok)}
+.painel{border:1px dashed var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.abas{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:center;
+  padding:6px max(10px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px));z-index:20}
+.abas div{display:flex;gap:4px;width:100%;max-width:960px}
+.abas button{flex:1;border:0;background:none;border-radius:10px;padding:8px 4px;min-height:48px;font-weight:500;color:var(--mute);display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px}
+.abas button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.abas button[aria-selected="true"]{color:var(--acc);background:var(--chip);font-weight:700}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(80px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;z-index:30;max-width:90vw}
+svg.gr{width:100%;max-width:640px;height:auto;display:block;margin:0 auto}
+@media (prefers-reduced-motion:no-preference){.prod,.btn{transition:transform .08s}}
 </style>
 </head>
 <body>
-<main>
-  <h1>PDV Anne</h1>
-  <p class="sub">Toque no que vendeu, escolha o pagamento. O resto o app calcula. · protótipo</p>
 
-  <nav role="tablist">
-    <button data-tab="vender" aria-selected="true">Vender</button>
-    <button data-tab="hoje" aria-selected="false">Hoje</button>
-    <button data-tab="mes" aria-selected="false">Mês</button>
-    <button data-tab="itens" aria-selected="false">Itens</button>
-  </nav>
-
-  <section id="vender" class="on">
-    <div class="card">
-      <div class="chips" id="cats"></div>
-      <div class="itens" id="grade"></div>
-      <div class="form" style="margin-top:12px">
-        <div><label for="livre">Valor livre (R$)</label><input id="livre" inputmode="decimal" placeholder="ex: 24,90"></div>
-        <div style="align-self:end"><button class="g" style="width:100%" data-act="livre">Adicionar</button></div>
-      </div>
-      <p class="note">Valor livre serve para o que não está nos botões. Entra na categoria escolhida acima.</p>
-    </div>
-    <div class="card">
-      <h2>Venda atual</h2>
-      <div id="cart"></div>
-      <div class="total"><span>Total</span><span id="tot">R$ 0,00</span></div>
-      <div class="form">
-        <div><label for="recebido">Recebido em dinheiro (opcional)</label><input id="recebido" inputmode="decimal" placeholder="para calcular o troco"></div>
-        <div style="align-self:end"><b id="troco"></b></div>
-      </div>
-      <div class="pags">
-        <button class="b" data-pag="din">Dinheiro</button>
-        <button class="b" data-pag="pix">Pix</button>
-        <button class="b" data-pag="cre">Crédito</button>
-        <button class="b" data-pag="deb">Débito</button>
-      </div>
-      <div class="actions"><button class="g" data-act="limpar">Limpar venda</button></div>
-    </div>
-  </section>
-
-  <section id="hoje"></section>
-  <section id="mes"></section>
-
-  <section id="itens">
-    <div class="card">
-      <h2>Novo item</h2>
-      <div class="form">
-        <div class="full"><label for="inNome">Nome</label><input id="inNome" placeholder="ex: Café gelado"></div>
-        <div><label for="inPreco">Preço (R$)</label><input id="inPreco" inputmode="decimal"></div>
-        <div><label for="inCat">Categoria</label><select id="inCat"></select></div>
-      </div>
-      <button class="b" data-act="addItem">Adicionar item</button>
-      <p class="note">Os itens abaixo são de exemplo. Apague e cadastre os da loja.</p>
-    </div>
-    <div class="card">
-      <h2>Nova categoria</h2>
-      <div class="form"><input id="inNovaCat" placeholder="ex: Utilidades"><button class="b" data-act="addCat">Criar</button></div>
-      <div id="listaCats"></div>
-    </div>
-    <div class="card"><h2>Itens cadastrados</h2><div id="listaItens"></div></div>
-    <div class="card">
-      <h2>Metas e dados</h2>
-      <div class="form">
-        <div><label for="cfMeta">Meta do mês (R$) — zero a zero</label><input id="cfMeta" inputmode="decimal"></div>
-        <div><label for="cfDias">Dias abertos no mês</label><input id="cfDias" inputmode="numeric"></div>
-      </div>
-      <div class="actions">
-        <button class="g" data-act="csv">Baixar vendas (CSV)</button>
-        <button class="g" data-act="json">Backup (JSON)</button>
-      </div>
-      <p class="note">Os dados ficam só neste aparelho. Faça o backup de vez em quando.</p>
-    </div>
-  </section>
-</main>
-<div id="toast"></div>
+<header class="topo">
+  <div><h1>Anne Patisserie</h1><small>Café e Empório · gestão da loja</small></div>
+  <span class="modo" id="modo">carregando…</span>
+</header>
+<main class="wrap" id="app"></main>
+<nav class="abas" aria-label="Seções"><div id="abas"></div></nav>
+<div id="toast" hidden></div>
 
 <script>
-const KEY = 'anne_pdv_v1';
-const PAGS = [{k:'din', n:'Dinheiro'}, {k:'pix', n:'Pix'}, {k:'cre', n:'Crédito'}, {k:'deb', n:'Débito'}];
-const padrao = () => ({
-  cats: ['Bebidas', 'Doces', 'Empório'],
-  itens: [
-    {id:'a1', n:'Café gelado', p:'15', c:'Bebidas'},
-    {id:'a2', n:'Cappuccino', p:'12', c:'Bebidas'},
-    {id:'a3', n:'Água', p:'4', c:'Bebidas'},
-    {id:'a4', n:'Bolo (fatia)', p:'10', c:'Doces'},
-    {id:'a5', n:'Brigadeiro', p:'4', c:'Doces'},
-    {id:'a6', n:'Geleia', p:'22', c:'Empório'}
-  ],
-  vendas: [], meta: '5200', dias: '26'
-});
-let S;
-try { S = Object.assign(padrao(), JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) { S = padrao(); }
-const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+(function () {
+'use strict';
+var $ = function (s, r) { return (r || document).querySelector(s); };
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function num(v){ var n = parseFloat(String(v == null ? '' : v).trim().replace(',', '.')); return isFinite(n) ? n : 0; }
+function brl(n){ return (isFinite(n) ? n : 0).toLocaleString('pt-BR', {style:'currency', currency:'BRL'}); }
+function brl0(n){ return (isFinite(n) ? n : 0).toLocaleString('pt-BR', {style:'currency', currency:'BRL', maximumFractionDigits:0}); }
+function pc(n, d){ d = d || 0; return (isFinite(n) ? n : 0).toLocaleString('pt-BR', {minimumFractionDigits:d, maximumFractionDigits:d}) + '%'; }
+function iso(d){ return new Date(d - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); }
+function hoje(){ return iso(new Date()); }
+function dBR(s){ return s.split('-').reverse().join('/'); }
+function uid(){ return Math.random().toString(36).slice(2, 9) + Date.now().toString(36).slice(-4); }
+function norm(s){ return String(s || '').toLowerCase().normalize('NFD').replace(new RegExp('[\u0300-\u036f]', 'g'), ''); }
+function clone(o){ return JSON.parse(JSON.stringify(o)); }
+function arred05(n){ return Math.ceil(+(n * 2).toFixed(6)) / 2; }
 
-const $ = id => document.getElementById(id);
-const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const num = v => { const n = parseFloat(String(v ?? '').trim().replace(',', '.')); return isFinite(n) ? n : 0; };
-const brl = n => (isFinite(n) ? n : 0).toLocaleString('pt-BR', {style:'currency', currency:'BRL'});
-const iso = d => new Date(d - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
-const hoje = () => iso(new Date());
-const uid = () => 'v' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
-const k = (t, v, c='') => `<div class="k"><small>${t}</small><b class="${c}">${v}</b></div>`;
-const pagNome = key => (PAGS.find(p => p.k === key) || {}).n || key;
+var PAGS = [['pix','Pix'],['din','Dinheiro'],['deb','Débito'],['cre','Crédito']];
+var CATS = ['Cafeteria','Confeitaria','Bebidas','Empório'];
+var COLS = ['produtos','vendas','config','historico'];
+var CONFIG0 = { fixos:[], proLabore:0, diasOperacao:30, taxas:{pix:0, din:0, deb:1.5, cre:1.5}, margemRef:35, tetoMei:81000 };
 
-const st = {cat: null, cart: []};
-const cartTotal = () => st.cart.reduce((t, l) => t + l.preco * l.qtd, 0);
+var S = { produtos:{}, vendas:{}, config:{}, historico:{}, carregou:{}, aba:'hoje', dia:hoje(), mes:hoje().slice(0, 7),
+          pag:'pix', cat:'Todos', busca:'', pCat:'Todos', pBusca:'', ed:null, modo:'carregando' };
 
-function toast(msg){ const t = $('toast'); t.textContent = msg; t.classList.add('on'); setTimeout(() => t.classList.remove('on'), 1400); }
+/* ---------- aviso ---------- */
+var toastT;
+function avisar(msg){ var t = $('#toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(function(){ t.hidden = true; }, 3500); }
 
-/* ---------- abas ---------- */
-document.querySelectorAll('nav button').forEach(b => b.onclick = () => {
-  document.querySelectorAll('nav button').forEach(x => x.setAttribute('aria-selected', x === b));
-  document.querySelectorAll('section').forEach(s => s.classList.toggle('on', s.id === b.dataset.tab));
+/* ---------- armazenamento: nuvem (db) ou, sem ela, o navegador ---------- */
+var Store = {
+  db: null, pend: {}, busy: {}, tm: {}, loc: null,
+  init: function () {
+    var self = this;
+    var p = (window.claude && window.claude.use) ? window.claude.use('db') : Promise.resolve(null);
+    return Promise.resolve(p).catch(function(){ return null; }).then(function (db) {
+      if (db) {
+        self.db = db; S.modo = 'nuvem';
+        COLS.forEach(function (col) {
+          db.collection(col).onSnapshot(function (snap) {
+            var o = {};
+            snap.docs.forEach(function (d) { if (!self.pendente(col + '/' + d.id)) o[d.id] = clone(d.data()); else o[d.id] = S[col][d.id]; });
+            Object.keys(S[col]).forEach(function (id) { if (self.pendente(col + '/' + id) && !(id in o)) o[id] = S[col][id]; });
+            S[col] = o; S.carregou[col] = true; agendaRender();
+          }, function (e) { S.carregou[col] = true; avisar('Não consegui ler os dados (' + ((e && e.code) || 'erro') + ').'); agendaRender(); });
+        });
+      } else {
+        S.modo = 'local';
+        try { self.loc = JSON.parse(localStorage.getItem('anne_nuvem_local') || '{}'); } catch (e) { self.loc = {}; }
+        COLS.forEach(function (c) { S[c] = self.loc[c] || {}; S.carregou[c] = true; });
+        agendaRender();
+      }
+    });
+  },
+  pendente: function (path) { return (path in this.pend) || !!this.busy[path]; },
+  salvar: function (path, data) {
+    var self = this; this.pend[path] = data;
+    clearTimeout(this.tm[path]); this.tm[path] = setTimeout(function () { self.enviar(path); }, 350);
+  },
+  enviar: function (path) {
+    var self = this;
+    if (this.busy[path]) { this.tm[path] = setTimeout(function () { self.enviar(path); }, 200); return; }
+    if (!(path in this.pend)) return;
+    var data = this.pend[path]; delete this.pend[path]; this.busy[path] = true;
+    var parts = path.split('/'), col = parts[0], id = parts[1], job;
+    if (this.db) { var ref = this.db.doc(path); job = data === null ? ref.delete() : ref.set(data); }
+    else { this.loc[col] = this.loc[col] || {}; if (data === null) delete this.loc[col][id]; else this.loc[col][id] = data;
+      try { localStorage.setItem('anne_nuvem_local', JSON.stringify(this.loc)); } catch (e) {} job = Promise.resolve(); }
+    job.catch(function (e) { avisar(e && e.code === 'invalid_argument' ? 'Sem permissão para salvar (só leitura).' : 'Não consegui salvar. Tente de novo.'); })
+       .then(function () { self.busy[path] = false; if (path in self.pend) self.tm[path] = setTimeout(function () { self.enviar(path); }, 50); });
+  }
+};
+
+/* ---------- contas ---------- */
+function cfg(){
+  var g = S.config.geral || {}, c = {};
+  c.fixos = Array.isArray(g.fixos) ? g.fixos : CONFIG0.fixos;
+  c.proLabore = g.proLabore != null ? g.proLabore : CONFIG0.proLabore;
+  c.diasOperacao = g.diasOperacao != null ? g.diasOperacao : CONFIG0.diasOperacao;
+  c.taxas = Object.assign({}, CONFIG0.taxas, g.taxas || {});
+  c.margemRef = g.margemRef != null ? g.margemRef : CONFIG0.margemRef;
+  c.tetoMei = g.tetoMei != null ? g.tetoMei : CONFIG0.tetoMei;
+  return c;
+}
+function salvaCfg(c){ S.config.geral = c; Store.salvar('config/geral', c); }
+function taxaDe(pag){ return num(cfg().taxas[pag]) / 100; }
+function totFixos(){ return cfg().fixos.reduce(function (t, f) { return t + num(f.valor); }, 0); }
+function linhaT(l){ var r = num(l.qtd) * num(l.preco), k = num(l.qtd) * num(l.custo); return { rec:r, cus:k, tax:r * taxaDe(l.pag) }; }
+function totDia(doc){
+  var T = { rec:0, cus:0, tax:0, itens:0 };
+  (doc.linhas || []).forEach(function (l) { var t = linhaT(l); T.rec += t.rec; T.cus += t.cus; T.tax += t.tax; T.itens += num(l.qtd); });
+  return T;
+}
+function totaisMes(mes){
+  var T = { rec:0, cus:0, tax:0, recReal:0, diasVenda:0, porDia:[], porCat:{}, porProd:{} };
+  var p = mes.split('-'), nd = new Date(+p[0], +p[1], 0).getDate();
+  for (var i = 1; i <= nd; i++) {
+    var ds = mes + '-' + String(i).padStart(2, '0'), doc = S.vendas[ds], rec = 0, folga = !!(doc && doc.folga);
+    if (doc && !folga) (doc.linhas || []).forEach(function (l) {
+      var t = linhaT(l); rec += t.rec; T.rec += t.rec; T.cus += t.cus; T.tax += t.tax; if (!l.est) T.recReal += t.rec;
+      var cat = l.cat || 'Outros', c = T.porCat[cat] = T.porCat[cat] || { rec:0, cus:0, tax:0 };
+      c.rec += t.rec; c.cus += t.cus; c.tax += t.tax;
+      var pr = T.porProd[l.nome] = T.porProd[l.nome] || { qtd:0, rec:0, lucro:0 };
+      pr.qtd += num(l.qtd); pr.rec += t.rec; pr.lucro += t.rec - t.cus - t.tax;
+    });
+    T.porDia.push({ n:i, ds:ds, v:rec, folga:folga }); if (rec > 0) T.diasVenda++;
+  }
+  return T;
+}
+function prodLista(){
+  return Object.keys(S.produtos).map(function (id) { var p = Object.assign({ id:id }, S.produtos[id]); return p; })
+    .sort(function (a, b) { var ia = CATS.indexOf(a.cat), ib = CATS.indexOf(b.cat); ia = ia < 0 ? 99 : ia; ib = ib < 0 ? 99 : ib; return ia - ib || norm(a.nome).localeCompare(norm(b.nome)); });
+}
+function margemP(p){ return num(p.preco) > 0 ? (num(p.preco) - num(p.custo)) / num(p.preco) : 0; }
+
+/* ---------- gráficos (SVG, cores do tema) ---------- */
+function T_(x, y, s, a, c, fs){ return '<text x="' + x + '" y="' + y + '" text-anchor="' + (a || 'middle') + '" style="fill:' + (c || 'var(--mute)') + ';font-size:' + (fs || 12) + 'px;font-family:var(--fb)">' + s + '</text>'; }
+function svgDias(dias, zzDia, plDia){
+  var W = 480, H = 230, pl = 46, pr = 8, pt = 18, pb = 24, nd = dias.length;
+  var mx = Math.max(1, Math.max.apply(null, dias.map(function (d) { return d.v; })), plDia * 1.08, zzDia * 1.08);
+  function y(v){ return pt + (H - pt - pb) * (1 - v / mx); }
+  var bw = (W - pl - pr) / nd, s = '<svg class="gr" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Faturamento por dia">';
+  [0, .5, 1].forEach(function (f) { var v = mx * f; s += '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + y(v) + '" y2="' + y(v) + '" style="stroke:var(--line)"/>' + T_(pl - 6, y(v) + 3, brl0(v), 'end'); });
+  dias.forEach(function (d, i) {
+    var x = pl + i * bw;
+    if (d.v > 0) { var cor = (plDia > 0 && d.v >= plDia) ? 'var(--ok)' : (zzDia > 0 && d.v >= zzDia) ? 'var(--acc)' : 'var(--bad)';
+      s += '<rect x="' + (x + 1.5) + '" y="' + y(d.v) + '" width="' + Math.max(1, bw - 3) + '" height="' + (H - pb - y(d.v)) + '" rx="2" style="fill:' + cor + '"><title>' + dBR(d.ds) + ': ' + brl(d.v) + '</title></rect>'; }
+    if (d.folga) s += T_(x + bw / 2, H - pb - 4, 'F');
+    if (nd <= 16 || i % 2 === 0) s += T_(x + bw / 2, H - 9, d.n);
+  });
+  if (zzDia > 0) s += '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + y(zzDia) + '" y2="' + y(zzDia) + '" stroke-dasharray="5 4" style="stroke:var(--warn);stroke-width:1.5"/>' + T_(W - pr, y(zzDia) - 4, 'contas ' + brl0(zzDia), 'end', 'var(--warn)');
+  if (plDia > 0) s += '<line x1="' + pl + '" x2="' + (W - pr) + '" y1="' + y(plDia) + '" y2="' + y(plDia) + '" stroke-dasharray="5 4" style="stroke:var(--ok);stroke-width:1.5"/>' + T_(W - pr, y(plDia) - 4, '+ pró-labore ' + brl0(plDia), 'end', 'var(--ok)');
+  return s + '</svg>';
+}
+
+/* ---------- telas ---------- */
+function chipsCat(atual, acao){
+  return '<div class="chips">' + ['Todos'].concat(CATS).map(function (c) { return '<button class="chip" data-act="' + acao + '" data-v="' + esc(c) + '" aria-pressed="' + (atual === c) + '">' + esc(c) + '</button>'; }).join('') + '</div>';
+}
+function vHoje(){
+  var d = S.dia, doc = S.vendas[d] || { linhas:[], folga:false, obs:'' }, T = totDia(doc), lista = prodLista();
+  var q = {}; (doc.linhas || []).forEach(function (l) { q[l.pid] = (q[l.pid] || 0) + num(l.qtd); });
+  var b = norm(S.busca);
+  var vis = lista.filter(function (p) { return p.ativo !== false && (S.cat === 'Todos' || p.cat === S.cat) && (!b || norm(p.nome).indexOf(b) >= 0); });
+  var sobra = T.rec - T.cus - T.tax, h = '';
+  h += '<div class="card"><div class="row"><button class="btn sec peq" data-act="dia" data-v="-1" aria-label="Dia anterior">‹</button>' +
+       '<div style="flex:1;min-width:150px"><label for="dia">Dia</label><input type="date" id="dia" value="' + d + '" data-f="dia"></div>' +
+       '<button class="btn sec peq" data-act="dia" data-v="1" aria-label="Próximo dia">›</button>' +
+       '<button class="btn sec peq" data-act="dia" data-v="hoje">Hoje</button>' +
+       '<label class="row" style="margin:0;color:var(--ink);font-size:14px"><input type="checkbox" id="folga" data-f="folga"' + (doc.folga ? ' checked' : '') + '> Folga</label></div></div>';
+  h += '<div class="card"><div class="kpis">' +
+       '<div class="kpi"><small>Vendido no dia</small><b>' + brl(T.rec) + '</b></div>' +
+       '<div class="kpi"><small>Custo dos produtos</small><b>' + brl(T.cus) + '</b></div>' +
+       '<div class="kpi"><small>Taxas de cartão</small><b>' + brl(T.tax) + '</b></div>' +
+       '<div class="kpi"><small>Sobra do dia' + (T.rec > 0 ? ' · ' + pc(sobra / T.rec * 100) : '') + '</small><b class="' + (sobra >= 0 ? 'ok' : 'bad') + '">' + brl(sobra) + '</b></div></div></div>';
+  if (!lista.length) {
+    h += '<div class="card"><h2>A tabela de preços está vazia</h2><p class="nota">Cadastre os produtos na aba Produtos (nome, custo e preço). É com o custo de cada um que a margem fica exata.</p></div>';
+  } else {
+    h += '<div class="card"><h2>Lançar venda</h2><p class="nota" style="margin:0 0 8px">Escolha como o cliente pagou e toque no produto.</p>' +
+         '<div class="pills" role="group" aria-label="Forma de pagamento">' + PAGS.map(function (p) { return '<button class="pill" data-act="pag" data-v="' + p[0] + '" aria-pressed="' + (S.pag === p[0]) + '">' + p[1] + '</button>'; }).join('') + '</div>' +
+         '<div style="margin:10px 0 8px"><input type="search" id="busca" placeholder="Buscar produto" value="' + esc(S.busca) + '" data-f="busca" aria-label="Buscar produto"></div>' +
+         chipsCat(S.cat, 'cat') +
+         '<div class="prods" style="margin-top:10px" id="prods">' + gradeProd(vis, q) + '</div></div>';
+  }
+  h += '<div class="card"><h2>Vendas do dia</h2>' + ((doc.linhas || []).length ? (doc.linhas || []).map(function (l) {
+    var t = linhaT(l);
+    return '<div class="linha"><div class="nm">' + esc(l.nome) + (l.est ? '<span class="tag">custo estimado</span>' : '') + '<small>' + esc(l.cat || '') + ' · ' + brl(num(l.preco)) + ' cada</small></div><div class="tot">' + brl(t.rec) + '</div>' +
+      '<div class="ctl"><div class="step"><button data-act="menos" data-id="' + l.id + '" aria-label="Diminuir">−</button><span>' + num(l.qtd) + '</span><button data-act="mais" data-id="' + l.id + '" aria-label="Aumentar">+</button></div>' +
+      '<select data-f="pagLinha" data-id="' + l.id + '" aria-label="Pagamento">' + PAGS.map(function (p) { return '<option value="' + p[0] + '"' + (l.pag === p[0] ? ' selected' : '') + '>' + p[1] + '</option>'; }).join('') + '</select>' +
+      '<button class="btn sec peq" data-act="apagaLinha" data-id="' + l.id + '">Remover</button></div></div>';
+  }).join('') : '<p class="nota">Nenhuma venda lançada neste dia.</p>') + '</div>';
+  h += '<details class="card"><summary><b>Venda de item fora da tabela</b></summary><div class="painel" style="margin-top:10px">' +
+       '<div class="grid"><div><label for="av-nome">Item</label><input id="av-nome" type="text"></div><div><label for="av-qtd">Quantidade</label><input id="av-qtd" type="text" inputmode="decimal" value="1"></div>' +
+       '<div><label for="av-preco">Preço de cada (R$)</label><input id="av-preco" type="text" inputmode="decimal"></div><div><label for="av-custo">Custo de cada (R$)</label><input id="av-custo" type="text" inputmode="decimal" placeholder="se não souber, deixe vazio"></div></div>' +
+       '<p class="nota">Sem custo informado, o app usa 50% do preço e marca como estimado.</p><div><button class="btn" data-act="addAvulso">Adicionar venda</button></div></div></details>';
+  h += '<div class="card"><label for="obs">Observação do dia (o que vendeu bem, o que faltou)</label><textarea id="obs" data-f="obs">' + esc(doc.obs || '') + '</textarea></div>';
+  return h;
+}
+function gradeProd(vis, q){
+  return vis.length ? vis.map(function (p) { return '<button class="prod" data-act="vende" data-id="' + p.id + '">' + (q[p.id] ? '<i>' + q[p.id] + '</i>' : '') + '<b>' + esc(p.nome) + '</b><span>' + brl(num(p.preco)) + '</span></button>'; }).join('') : '<p class="nota">Nenhum produto encontrado.</p>';
+}
+function vMes(){
+  var c = cfg(), T = totaisMes(S.mes), fx = totFixos(), pl = num(c.proLabore), dias = Math.max(1, num(c.diasOperacao)), h = '';
+  var lucro = T.rec - T.cus - T.tax, margemReal = T.rec > 0 ? lucro / T.rec : 0, usaReal = T.rec >= 1000, m = usaReal ? margemReal : num(c.margemRef) / 100;
+  var zz = m > 0 ? fx / m : 0, zzPL = m > 0 ? (fx + pl) / m : 0, resultado = lucro - fx;
+  var media = T.diasVenda ? T.rec / T.diasVenda : 0, proj = media * dias, projRes = proj * m - fx, tetoMes = num(c.tetoMei) / 12;
+  h += '<div class="card"><div style="max-width:240px"><label for="mes">Mês</label><input type="month" id="mes" value="' + S.mes + '" data-f="mes"></div></div>';
+  if (!T.rec) h += '<div class="alert">Ainda não há vendas neste mês. Lance o caixa do dia na aba Hoje e esta tela se preenche.</div>';
+  h += '<div class="card"><div class="kpis">' +
+       '<div class="kpi"><small>Vendido no mês</small><b>' + brl(T.rec) + '</b></div>' +
+       '<div class="kpi"><small>Sobra depois dos produtos e taxas</small><b>' + brl(lucro) + '</b></div>' +
+       '<div class="kpi"><small>Margem ' + (usaReal ? 'real do mês' : 'de referência') + '</small><b>' + pc(m * 100, 1) + '</b></div>' +
+       '<div class="kpi"><small>Contas fixas do mês</small><b>' + brl(fx) + '</b></div>' +
+       '<div class="kpi"><small>Resultado, antes do pró-labore</small><b class="' + (resultado >= 0 ? 'ok' : 'bad') + '">' + brl(resultado) + '</b></div>' +
+       '<div class="kpi"><small>Depois do pró-labore (' + brl(pl) + ')</small><b class="' + (resultado - pl >= 0 ? 'ok' : 'bad') + '">' + brl(resultado - pl) + '</b></div></div>' +
+       (usaReal ? '' : '<p class="nota">Com menos de R$ 1.000 vendidos no mês, uso a margem de referência (' + pc(num(c.margemRef)) + '), definida em Contas.</p>') + '</div>';
+  var pctReal = T.rec > 0 ? T.recReal / T.rec * 100 : 100;
+  if (T.rec > 0 && pctReal < 80) h += '<div class="alert">Só ' + pc(pctReal) + ' das vendas têm custo conferido. O resto usa custo estimado, então a margem pode estar alta demais. Confira em Produtos.</div>';
+  var aCob = zz > 0 ? Math.min(100, T.rec / zz * 100) : 0, aPL = zzPL > 0 ? Math.min(100, T.rec / zzPL * 100) : 0;
+  h += '<div class="card"><h2>Quanto precisa vender</h2><div class="kpis">' +
+       '<div class="kpi"><small>Para cobrir as contas</small><b>' + brl(zz) + '</b><small>' + brl(zz / dias) + ' por dia aberto</small></div>' +
+       '<div class="kpi"><small>Contas + pró-labore</small><b>' + brl(zzPL) + '</b><small>' + brl(zzPL / dias) + ' por dia aberto</small></div>' +
+       '<div class="kpi"><small>Sua média por dia vendido</small><b>' + brl(media) + '</b><small>projeção do mês: ' + brl(proj) + '</small></div></div>' +
+       '<div style="margin-top:12px"><div class="row" style="justify-content:space-between"><small>Contas</small><small>' + pc(aCob) + '</small></div><div class="bar"><i style="width:' + aCob + '%"></i></div></div>' +
+       '<div style="margin-top:8px"><div class="row" style="justify-content:space-between"><small>Contas + pró-labore</small><small>' + pc(aPL) + '</small></div><div class="bar ok"><i style="width:' + aPL + '%"></i></div></div>' +
+       (T.diasVenda ? '<p class="nota">No ritmo atual, o mês fecha com ' + brl(projRes) + ' antes do pró-labore. ' + (proj > tetoMes ? 'Atenção: a projeção passa do teto mensal do MEI (' + brl0(tetoMes) + ').' : 'Fica dentro do teto mensal do MEI (' + brl0(tetoMes) + ').') + '</p>' : '') + '</div>';
+  var pd = zz / dias, plD = zzPL / dias;
+  h += '<div class="card"><h2>Vendas por dia</h2>' + svgDias(T.porDia, pd, plD) + '<p class="nota">Verde: passou de contas + pró-labore. Cor da marca: cobriu as contas. Vermelho: abaixo. “F” é folga.</p></div>';
+  var rowsCx = Object.keys(S.vendas).filter(function (k) { return k.indexOf(S.mes) === 0; }).sort().map(function (k) {
+    var doc = S.vendas[k], s = { din:0, pix:0, cre:0, deb:0 };
+    (doc.linhas || []).forEach(function (l) { if (s[l.pag] != null) s[l.pag] += linhaT(l).rec; });
+    return { ds:k, folga:!!doc.folga, s:s, tot:s.din + s.pix + s.cre + s.deb };
+  });
+  if (rowsCx.length) {
+    var tt = { din:0, pix:0, cre:0, deb:0, tot:0 }; rowsCx.forEach(function (r) { tt.din += r.s.din; tt.pix += r.s.pix; tt.cre += r.s.cre; tt.deb += r.s.deb; tt.tot += r.tot; });
+    h += '<div class="card"><h2>Caixa do mês, dia a dia</h2><div class="tw"><table><tr><th>Dia</th><th class="n">Dinheiro</th><th class="n">Pix</th><th class="n">Crédito</th><th class="n">Débito</th><th class="n">Total</th><th></th></tr>' +
+      rowsCx.map(function (r) { return '<tr><td>' + dBR(r.ds).slice(0, 5) + (r.folga ? ' (folga)' : '') + '</td><td class="n">' + brl(r.s.din) + '</td><td class="n">' + brl(r.s.pix) + '</td><td class="n">' + brl(r.s.cre) + '</td><td class="n">' + brl(r.s.deb) + '</td><td class="n"><b>' + brl(r.tot) + '</b></td><td><button class="btn sec peq" data-act="abreDia" data-v="' + r.ds + '">Abrir</button></td></tr>'; }).join('') +
+      '<tr style="font-weight:700"><td>Total</td><td class="n">' + brl(tt.din) + '</td><td class="n">' + brl(tt.pix) + '</td><td class="n">' + brl(tt.cre) + '</td><td class="n">' + brl(tt.deb) + '</td><td class="n">' + brl(tt.tot) + '</td><td></td></tr></table></div></div>';
+  }
+  var cats = Object.keys(T.porCat).sort(function (a, b) { return T.porCat[b].rec - T.porCat[a].rec; });
+  if (cats.length) {
+    h += '<div class="card"><h2>De onde vem a margem</h2>' + cats.map(function (k) {
+      var x = T.porCat[k], l = x.rec - x.cus - x.tax, mg = x.rec > 0 ? l / x.rec * 100 : 0;
+      return '<div class="pr"><span class="a">' + esc(k) + '</span><span class="b">' + brl(l) + '</span><div class="c"><span>' + pc(x.rec / T.rec * 100) + ' das vendas · margem ' + pc(mg) + '</span><div class="bar ' + (mg >= 45 ? 'ok' : '') + '"><i style="width:' + Math.max(2, Math.min(100, mg)) + '%"></i></div></div></div>';
+    }).join('') + '<p class="nota">Quanto mais as vendas se concentram nas categorias de margem alta, menos você precisa vender para fechar as contas.</p></div>';
+    var tops = Object.keys(T.porProd).sort(function (a, b) { return T.porProd[b].lucro - T.porProd[a].lucro; }).slice(0, 6);
+    h += '<div class="card"><h2>Quem mais deixou dinheiro</h2>' + tops.map(function (k) { var x = T.porProd[k];
+      return '<div class="pr"><span class="a">' + esc(k) + '</span><span class="b">' + brl(x.lucro) + '</span><div class="c"><span>' + x.qtd + ' vendidos · ' + brl(x.rec) + '</span></div></div>'; }).join('') + '</div>';
+  }
+  h += '<div class="card"><h2>E se a margem for outra?</h2><div class="tw"><table><tr><th>Margem</th><th class="n">Cobre as contas</th><th class="n">Contas + pró-labore</th></tr>' +
+       [25, 35, 45, 55, 65].concat([Math.round(m * 100)]).filter(function (v, i, a) { return a.indexOf(v) === i; }).sort(function (a, b) { return a - b; }).map(function (v) {
+         return '<tr' + (v === Math.round(m * 100) ? ' style="font-weight:700"' : '') + '><td>' + v + '%</td><td class="n">' + brl0(fx / (v / 100) / dias) + ' por dia</td><td class="n">' + brl0((fx + pl) / (v / 100) / dias) + ' por dia</td></tr>'; }).join('') + '</table></div></div>';
+  var hs = S.historico.ciclo1;
+  if (hs) h += '<div class="card"><h2>Primeiro mês da loja</h2><div class="kpis"><div class="kpi"><small>Faturamento</small><b>' + brl(num(hs.faturamento)) + '</b></div><div class="kpi"><small>Custo dos produtos</small><b>' + brl(num(hs.custo)) + '</b></div><div class="kpi"><small>Taxas de cartão</small><b>' + brl(num(hs.taxas)) + '</b></div><div class="kpi"><small>Resultado da planilha</small><b>' + brl(num(hs.resultado)) + '</b></div></div>' + (hs.nota ? '<p class="nota">' + esc(hs.nota) + '</p>' : '') + '</div>';
+  return h;
+}
+function vProdutos(){
+  var lista = prodLista(), b = norm(S.pBusca), h = '';
+  var vis = lista.filter(function (p) { return (S.pCat === 'Todos' || p.cat === S.pCat) && (!b || norm(p.nome).indexOf(b) >= 0); });
+  var porCat = {}; lista.forEach(function (p) { if (p.ativo === false) return; var x = porCat[p.cat] = porCat[p.cat] || { s:0, n:0 }; x.s += margemP(p); x.n++; });
+  var estim = lista.filter(function (p) { return !p.custoReal; }).length;
+  h += '<div class="card"><div class="row" style="justify-content:space-between"><h2 style="margin:0">Tabela de preços</h2><button class="btn" data-act="novoProd">Novo produto</button></div>' +
+       '<p class="nota">Margem = (preço − custo) ÷ preço, antes das taxas de cartão.</p><div style="margin:10px 0"><input type="search" id="pbusca" placeholder="Buscar produto" value="' + esc(S.pBusca) + '" data-f="pBusca" aria-label="Buscar produto"></div>' + chipsCat(S.pCat, 'pcat') + '</div>';
+  if (estim) h += '<div class="alert">' + estim + ' produto' + (estim > 1 ? 's' : '') + ' com custo estimado (sem a marca "custo conferido"). A margem desses é um palpite.</div>';
+  if (Object.keys(porCat).length) h += '<div class="card"><h3>Margem média por categoria</h3>' + Object.keys(porCat).sort().map(function (k) { var mg = porCat[k].s / porCat[k].n * 100;
+    return '<div class="pr"><span class="a">' + esc(k) + '</span><span class="b">' + pc(mg) + '</span><div class="c"><div class="bar ' + (mg >= 45 ? 'ok' : '') + '"><i style="width:' + Math.max(2, Math.min(100, mg)) + '%"></i></div></div></div>'; }).join('') + '</div>';
+  if (S.ed && S.ed.id === null) h += editor();
+  h += '<div class="card">' + (vis.length ? vis.map(function (p) {
+    var mg = margemP(p) * 100;
+    return '<div class="pr"><button class="a" data-act="editaProd" data-id="' + p.id + '">' + esc(p.nome) + (p.custoReal ? '<span class="tag ok">custo conferido</span>' : '<span class="tag">estimado</span>') + (p.ativo === false ? '<span class="tag">oculto</span>' : '') + '</button><span class="b">' + brl(num(p.preco)) + '</span>' +
+      '<div class="c"><span>' + esc(p.cat || '') + ' · custo ' + brl(num(p.custo)) + ' · margem ' + pc(mg) + '</span><div class="bar ' + (mg >= 45 ? 'ok' : '') + '"><i style="width:' + Math.max(2, Math.min(100, mg)) + '%"></i></div></div></div>' +
+      (S.ed && S.ed.id === p.id ? editor() : '');
+  }).join('') : '<p class="nota">Nenhum produto encontrado.</p>') + '</div>';
+  return h;
+}
+function ingCusto(ings){ return (ings || []).reduce(function (t, g) { return num(g.emb) > 0 ? t + num(g.preco) / num(g.emb) * num(g.uso) : t; }, 0); }
+function editor(){
+  var e = S.ed, h = '<div class="painel" id="editor"><h3>' + (e.id === null ? 'Novo produto' : 'Editar produto') + '</h3>' +
+    '<div class="grid"><div><label for="ed-nome">Nome</label><input id="ed-nome" type="text" value="' + esc(e.nome) + '" data-e="nome"></div>' +
+    '<div><label for="ed-cat">Categoria</label><select id="ed-cat" data-e="cat">' + CATS.map(function (c) { return '<option' + (e.cat === c ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select></div>' +
+    '<div><label for="ed-custo">Custo (R$)</label><input id="ed-custo" type="text" inputmode="decimal" value="' + esc(e.custo) + '" data-e="custo"></div>' +
+    '<div><label for="ed-preco">Preço de venda (R$)</label><input id="ed-preco" type="text" inputmode="decimal" value="' + esc(e.preco) + '" data-e="preco"></div></div>' +
+    '<div class="row"><label class="row" style="margin:0;color:var(--ink);font-size:14px"><input type="checkbox" id="ed-real" data-e="custoReal"' + (e.custoReal ? ' checked' : '') + '> Custo conferido (veio de nota ou conta)</label>' +
+    '<label class="row" style="margin:0;color:var(--ink);font-size:14px"><input type="checkbox" id="ed-ativo" data-e="ativo"' + (e.ativo !== false ? ' checked' : '') + '> Aparece nas vendas</label></div>' +
+    '<div class="kpis"><div class="kpi"><small>Margem</small><b id="ed-mg">–</b></div><div class="kpi"><small>Sobra por unidade</small><b id="ed-sobra">–</b></div>' +
+    '<div class="kpi"><small>Margem que você quer</small><input id="ed-alvo" type="text" inputmode="decimal" value="' + esc(e.alvo) + '" data-e="alvo" aria-label="Margem desejada em porcentagem"></div><div class="kpi"><small>Preço para essa margem</small><b id="ed-sug">–</b></div></div>' +
+    '<details' + ((e.ings || []).length ? ' open' : '') + '><summary><b>Calcular o custo pelos ingredientes</b></summary><div style="margin-top:8px">' +
+    (e.ings || []).map(function (g, i) { return '<div class="grid" style="margin-bottom:8px"><div><label>Ingrediente</label><input type="text" value="' + esc(g.n) + '" data-i="' + i + '" data-k="n"></div><div><label>Preço pago</label><input type="text" inputmode="decimal" value="' + esc(g.preco) + '" data-i="' + i + '" data-k="preco"></div><div><label>Qtd. na embalagem</label><input type="text" inputmode="decimal" value="' + esc(g.emb) + '" data-i="' + i + '" data-k="emb"></div><div><label>Uso por unidade</label><input type="text" inputmode="decimal" value="' + esc(g.uso) + '" data-i="' + i + '" data-k="uso"></div><div style="align-self:end"><button class="btn sec peq" data-act="rmIng" data-i="' + i + '">Tirar</button></div></div>'; }).join('') +
+    '<div class="row"><button class="btn sec peq" data-act="addIng">Adicionar ingrediente</button><button class="btn sec peq" data-act="usaCusto">Usar o custo calculado: <span id="ed-calc">' + brl(ingCusto(e.ings)) + '</span></button></div>' +
+    '<p class="nota">Use a mesma unidade na embalagem e no uso (g, ml ou unidade). Inclua copo, tampa e canudo.</p></div></details>' +
+    '<div class="row"><button class="btn" data-act="salvaProd">Salvar</button><button class="btn sec" data-act="fechaEd">Cancelar</button>' +
+    (e.id !== null ? '<button class="btn ' + (e.apagar ? 'perigo' : 'sec') + '" data-act="apagaProd">' + (e.apagar ? 'Confirmar: apagar este produto' : 'Apagar') + '</button>' : '') + '</div></div>';
+  return h;
+}
+function vContas(){
+  var c = cfg(), h = '';
+  h += '<div class="card"><h2>Contas fixas do mês</h2><div id="fixos">' + c.fixos.map(function (f, i) {
+    return '<div class="grid" style="grid-template-columns:2fr 1fr auto;margin-bottom:8px;align-items:end"><div><label>Conta</label><input type="text" value="' + esc(f.nome) + '" data-c="fixo" data-i="' + i + '" data-k="nome"></div><div><label>Valor (R$)</label><input type="text" inputmode="decimal" value="' + esc(f.valor) + '" data-c="fixo" data-i="' + i + '" data-k="valor"></div><button class="btn sec peq" data-act="rmFixo" data-i="' + i + '" aria-label="Remover conta">Tirar</button></div>'; }).join('') +
+    '</div><div class="row"><button class="btn sec" data-act="addFixo">Adicionar conta</button><span class="nota">Total: <b id="totfx">' + brl(totFixos()) + '</b></span></div></div>';
+  h += '<div class="card"><h2>Pró-labore e dias</h2><div class="grid"><div><label for="c-pl">Pró-labore por mês (R$)</label><input id="c-pl" type="text" inputmode="decimal" value="' + esc(c.proLabore) + '" data-c="geral" data-k="proLabore"></div>' +
+    '<div><label for="c-dias">Dias abertos no mês</label><input id="c-dias" type="text" inputmode="numeric" value="' + esc(c.diasOperacao) + '" data-c="geral" data-k="diasOperacao"></div>' +
+    '<div><label for="c-ref">Margem de referência (%)</label><input id="c-ref" type="text" inputmode="decimal" value="' + esc(c.margemRef) + '" data-c="geral" data-k="margemRef"></div>' +
+    '<div><label for="c-mei">Teto do MEI por ano (R$)</label><input id="c-mei" type="text" inputmode="numeric" value="' + esc(c.tetoMei) + '" data-c="geral" data-k="tetoMei"></div></div>' +
+    '<p class="nota">A margem de referência só vale enquanto o mês tem menos de R$ 1.000 vendidos. Depois disso o app usa a margem real das vendas.</p></div>';
+  h += '<div class="card"><h2>Taxas da maquininha (%)</h2><div class="grid">' + PAGS.map(function (p) { return '<div><label for="t-' + p[0] + '">' + p[1] + '</label><input id="t-' + p[0] + '" type="text" inputmode="decimal" value="' + esc(c.taxas[p[0]]) + '" data-c="taxa" data-k="' + p[0] + '"></div>'; }).join('') + '</div>' +
+    '<p class="nota">Confirme os valores reais da sua maquininha no contrato ou no extrato do banco.</p>' +
+    '<div class="painel" style="margin-top:10px"><h3>Descobrir a taxa de uma venda</h3><div class="grid"><div><label for="tx-c">Cobrei (R$)</label><input id="tx-c" type="text" inputmode="decimal"></div><div><label for="tx-r">Caiu na conta (R$)</label><input id="tx-r" type="text" inputmode="decimal"></div></div><p class="nota" id="tx-res">Preencha os dois valores. Use uma venda acima de R$ 30 para o resultado ser preciso.</p></div></div>';
+  h += '<div class="card"><h2>Exportar</h2><p class="nota" style="margin:0 0 8px">Baixa todas as vendas em uma planilha (CSV) que abre no Excel e no Power BI.</p><div class="row"><button class="btn sec" data-act="exporta">Baixar vendas (CSV)</button><button class="btn sec" data-act="backup">Baixar cópia de tudo (backup)</button><button class="btn sec" data-act="restaura">Restaurar de um backup</button><input type="file" id="arq" accept="application/json,.json" data-f="restaura" hidden></div><p class="nota">Os dados ficam só neste aparelho. Baixe um backup de vez em quando e guarde no e-mail ou no Drive.</p></div>';
+  return h;
+}
+
+/* ---------- precificar: ficha de custo ligada à tabela de preços ---------- */
+function prNovo(cat){ S.pr = { id:null, nome:'', cat:cat || 'Cafeteria', ings:[{ n:'', preco:'', emb:'', uso:'' }], fator:cat === 'Empório' ? '1,5' : '2,2', preco:'', taxa:String(cfg().taxas.deb) }; }
+function prAbre(id){
+  var p = S.produtos[id]; if (!p) { prNovo(); render(); return; }
+  S.pr = { id:id, nome:p.nome, cat:p.cat || 'Cafeteria',
+    ings:(p.ings && p.ings.length) ? clone(p.ings) : [{ n:'Custo atual', preco:String(p.custo != null ? p.custo : ''), emb:'1', uso:'1' }],
+    fator:p.cat === 'Empório' ? '1,5' : '2,2', preco:String(p.preco != null ? p.preco : ''), taxa:String(cfg().taxas.deb) };
   render();
-});
-
-/* ---------- vender ---------- */
-function renderVender(){
-  if (!S.cats.includes(st.cat)) st.cat = S.cats[0] || null;
-  $('cats').innerHTML = S.cats.map(c => `<button class="chip ${c === st.cat ? 'on' : ''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('');
-  const lista = S.itens.filter(i => i.c === st.cat);
-  $('grade').innerHTML = lista.length
-    ? lista.map(i => `<button class="it" data-item="${esc(i.id)}"><b>${esc(i.n)}</b><span>${brl(num(i.p))}</span></button>`).join('')
-    : '<p class="note">Sem itens nesta categoria. Cadastre na aba Itens ou use o valor livre.</p>';
-  renderCart();
 }
-function renderCart(){
-  $('cart').innerHTML = st.cart.length ? st.cart.map((l, i) => `
-    <div class="linha"><div class="n">${esc(l.nome)}<br><small>${brl(l.preco)}</small></div>
-      <div class="q"><button class="x" data-dec="${i}">−</button><b>${l.qtd}</b><button class="x" data-inc="${i}">+</button></div>
-      <b>${brl(l.preco * l.qtd)}</b></div>`).join('') : '<p class="note">Toque nos itens para montar a venda.</p>';
-  $('tot').textContent = brl(cartTotal());
-  const rec = num($('recebido').value), t = cartTotal();
-  $('troco').innerHTML = rec > 0 && t > 0 ? (rec >= t ? `Troco: <span class="ok">${brl(rec - t)}</span>` : `<span class="bad">Falta ${brl(t - rec)}</span>`) : '';
+function lerPr(){
+  var p = S.pr; if (!p) return;
+  document.querySelectorAll('#prbox [data-pr]').forEach(function (el) {
+    var k = el.dataset.pr;
+    if (k === 'ing') { var g = p.ings[+el.dataset.i]; if (g) g[el.dataset.k] = el.value; } else p[k] = el.value;
+  });
 }
-function addCart(id, nome, preco){
-  const l = st.cart.find(x => x.id === id);
-  if (l) l.qtd++; else st.cart.push({id, nome, preco, qtd: 1});
-  renderCart();
+function atualizaPr(){
+  var p = S.pr; if (!p) return;
+  var custo = ingCusto(p.ings), preco = num(p.preco), taxa = preco * num(p.taxa) / 100, lucro = preco - custo - taxa;
+  var cmv = preco > 0 ? custo / preco * 100 : 0, mg = preco > 0 ? lucro / preco * 100 : 0, sug = arred05(custo * num(p.fator));
+  var cls = mg >= 50 ? 'ok' : mg >= 30 ? 'warn' : 'bad';
+  function set(id, t, c){ var el = document.getElementById(id); if (el) { el.textContent = t; if (c != null) el.className = c; } }
+  set('pr-custo', brl(custo)); set('pr-sug', brl(sug)); set('pr-lucro', brl(lucro), lucro > 0 ? 'ok' : 'bad'); set('pr-cmv', pc(cmv), cls); set('pr-mg', pc(mg), cls);
+  set('pr-ver', preco <= 0 ? 'Digite o preço que você cobra para ver a margem.' :
+    mg >= 50 ? 'Margem forte: sobra metade ou mais do preço.' :
+    mg >= 35 ? 'Margem boa.' :
+    mg >= 25 ? 'Apertado: considere subir um pouco o preço ou reduzir algum custo.' :
+    'Margem abaixo de 25%: cada venda deixa pouco. Veja o preço sugerido.');
 }
-function finalizar(pag){
-  if (!st.cart.length) return toast('Venda vazia');
-  const agora = new Date();
-  S.vendas.push({id: uid(), data: hoje(), hora: agora.toTimeString().slice(0, 5), pag, total: cartTotal(),
-    itens: st.cart.map(l => ({nome: l.nome, preco: l.preco, qtd: l.qtd}))});
-  save(); st.cart = []; $('recebido').value = '';
-  toast('Venda registrada · ' + pagNome(pag)); renderCart();
-}
-
-/* ---------- hoje ---------- */
-function renderHoje(){
-  const vs = S.vendas.filter(v => v.data === hoje());
-  const tot = vs.reduce((t, v) => t + v.total, 0);
-  const porPag = PAGS.map(p => ({n: p.n, v: vs.filter(v => v.pag === p.k).reduce((t, v) => t + v.total, 0)}));
-  $('hoje').innerHTML = `
-    <div class="card"><h2>Hoje</h2>
-      <div class="res">${k('Vendido', brl(tot))}${k('Vendas', vs.length)}${k('Ticket médio', brl(vs.length ? tot / vs.length : 0))}</div>
-      <div class="res">${porPag.map(p => k(p.n, brl(p.v))).join('')}</div>
-    </div>
-    <div class="card"><h2>Últimas vendas</h2>
-      ${vs.length ? vs.slice().reverse().map(v => `
-        <div class="linha"><div class="n"><b>${brl(v.total)}</b> · ${esc(pagNome(v.pag))} · ${esc(v.hora)}<br>
-          <small>${v.itens.map(i => esc(i.qtd + '× ' + i.nome)).join(', ')}</small></div>
-          <button class="x" data-del="${esc(v.id)}">Desfazer</button></div>`).join('') : '<p class="note">Nenhuma venda hoje ainda.</p>'}
-    </div>`;
-}
-
-/* ---------- mês ---------- */
-function svgDias(dias, diaMeta, ult){
-  const W = 640, H = 200, pl = 8, pr = 8, pt = 14, pb = 24;
-  const mx = Math.max(diaMeta, ...dias, 1) * 1.1, bw = (W - pl - pr) / ult;
-  const yy = v => pt + (H - pt - pb) * (1 - v / mx);
-  const bars = dias.slice(0, ult).map((v, i) => `<rect x="${pl + i * bw + 1}" y="${yy(v)}" width="${Math.max(bw - 2, 1)}" height="${H - pb - yy(v)}" rx="2" style="fill:var(--acc)"/>`).join('');
-  const labs = dias.slice(0, ult).map((_, i) => (i + 1) % 5 === 0 || i === 0 ? `<text x="${pl + i * bw + bw / 2}" y="${H - 8}" text-anchor="middle" style="fill:var(--mute);font-size:10px">${i + 1}</text>` : '').join('');
-  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Vendas por dia do mês">${bars}${labs}
-    <line x1="${pl}" x2="${W - pr}" y1="${yy(diaMeta)}" y2="${yy(diaMeta)}" stroke="var(--warn)" stroke-dasharray="5 4"/>
-    <text x="${W - pr}" y="${yy(diaMeta) - 4}" text-anchor="end" style="fill:var(--warn);font-size:10px">meta por dia ${brl(diaMeta)}</text></svg>`;
-}
-function renderMes(){
-  const h = new Date(), mes = iso(h).slice(0, 7), ult = h.getDate();
-  const dias = Array(31).fill(0);
-  S.vendas.filter(v => v.data.slice(0, 7) === mes).forEach(v => dias[+v.data.slice(8) - 1] += v.total);
-  const tot = dias.reduce((a, b) => a + b, 0), comVenda = dias.filter(x => x > 0).length;
-  const meta = num(S.meta), dAb = Math.max(num(S.dias), 1);
-  const media = comVenda ? tot / comVenda : 0, proj = media * dAb;
-  const falta = Math.max(meta - tot, 0), restam = Math.max(dAb - comVenda, 0);
-  const bate = proj >= meta;
-  $('mes').innerHTML = `
-    <div class="card"><h2>Como está o mês</h2>
-      ${comVenda ? `<div class="alert ${bate ? 'ok' : ''}">${bate
-        ? `Seguindo nesse ritmo, o mês fecha em ${brl(proj)}. Meta batida.`
-        : `Seguindo nesse ritmo, o mês fecha em ${brl(proj)}, abaixo da meta de ${brl(meta)}. Faltam ${brl(falta)}${restam ? ` (cerca de ${brl(falta / restam)} por dia nos dias que restam)` : ''}.`}</div>` : '<p class="note">Sem vendas neste mês ainda.</p>'}
-      <div class="res">${k('Vendido no mês', brl(tot))}${k('Média por dia com venda', brl(media))}${k('Projeção do mês', brl(proj), comVenda ? (bate ? 'ok' : 'warn') : '')}${k('Meta do mês', brl(meta))}</div>
-      <div class="bar" style="height:10px;background:var(--line);border-radius:6px;overflow:hidden"><i style="display:block;height:100%;width:${Math.min(meta ? tot / meta * 100 : 0, 100)}%;background:var(--acc)"></i></div>
-      <p class="note">${meta ? Math.round(tot / meta * 100) : 0}% da meta. Projeção = média dos dias com venda × dias abertos.</p>
-    </div>
-    <div class="card"><h2>Vendas por dia</h2>${svgDias(dias, meta / dAb, ult)}</div>`;
+function vPreco(){
+  if (!S.pr) prNovo();
+  var p = S.pr, lista = prodLista(), atual = p.id ? S.produtos[p.id] : null;
+  var h = '<div class="card" id="prbox"><h2>Precificar</h2><p class="nota" style="margin:0 0 10px">Use quando repor estoque ou criar um produto. Ao salvar, o custo e o preço novos entram na tabela de preços e passam a valer nas próximas vendas.</p>' +
+    '<div class="grid"><div><label for="pr-sel">Abrir um produto da tabela</label><select id="pr-sel" data-f="prSel"><option value="">Produto novo</option>' +
+      lista.map(function (x) { return '<option value="' + x.id + '"' + (p.id === x.id ? ' selected' : '') + '>' + esc(x.nome) + '</option>'; }).join('') + '</select></div>' +
+    '<div><label for="pr-nome">Nome</label><input id="pr-nome" type="text" value="' + esc(p.nome) + '" data-pr="nome"></div>' +
+    '<div><label for="pr-cat">Categoria</label><select id="pr-cat" data-pr="cat">' + CATS.map(function (c) { return '<option' + (p.cat === c ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select></div></div>' +
+    (atual ? '<p class="nota">Hoje na tabela: custo ' + brl(num(atual.custo)) + ', preço ' + brl(num(atual.preco)) + (atual.custoReal ? ' (custo conferido).' : ' (custo estimado).') + '</p>' : '') +
+    '<h3 style="margin-top:14px">Ingredientes ou compra</h3>' +
+    '<p class="nota" style="margin:0 0 8px"><b>Produto revendido:</b> preço pago = valor da compra, quantidade na embalagem = quantas unidades vieram, uso = 1. <b>Bebida ou doce feito aqui:</b> uma linha por ingrediente, com o uso em g, ml ou unidades (a colher de 15 ml vale 15 ml; para pó, pese uma colher rasa). Inclua copo, tampa e canudo.</p>' +
+    p.ings.map(function (g, i) {
+      return '<div class="grid" style="margin-bottom:8px"><div><label>Ingrediente</label><input type="text" value="' + esc(g.n) + '" data-pr="ing" data-i="' + i + '" data-k="n"></div>' +
+        '<div><label>Preço pago (R$)</label><input type="text" inputmode="decimal" value="' + esc(g.preco) + '" data-pr="ing" data-i="' + i + '" data-k="preco"></div>' +
+        '<div><label>Qtd. na embalagem</label><input type="text" inputmode="decimal" value="' + esc(g.emb) + '" data-pr="ing" data-i="' + i + '" data-k="emb"></div>' +
+        '<div><label>Uso por unidade vendida</label><input type="text" inputmode="decimal" value="' + esc(g.uso) + '" data-pr="ing" data-i="' + i + '" data-k="uso"></div>' +
+        '<div style="align-self:end"><button class="btn sec peq" data-act="prRmIng" data-i="' + i + '">Tirar</button></div></div>';
+    }).join('') +
+    '<button class="btn sec peq" data-act="prAddIng">Adicionar ingrediente</button>' +
+    '<h3 style="margin-top:16px">Preço e margem</h3>' +
+    '<div class="grid"><div><label for="pr-fator">Multiplicador (custo × …)</label><input id="pr-fator" type="text" inputmode="decimal" value="' + esc(p.fator) + '" data-pr="fator"></div>' +
+    '<div><label for="pr-preco">Preço que você cobra (R$)</label><input id="pr-preco" type="text" inputmode="decimal" value="' + esc(p.preco) + '" data-pr="preco"></div>' +
+    '<div><label for="pr-taxa">Taxa da maquininha (%)</label><input id="pr-taxa" type="text" inputmode="decimal" value="' + esc(p.taxa) + '" data-pr="taxa"></div></div>' +
+    '<p class="nota">Multiplicador: 2,2 para o que é feito na loja; 1,4 a 1,6 para produto revendido. É só uma referência, quem decide o preço é você.</p>' +
+    '<div class="kpis" style="margin-top:10px"><div class="kpi"><small>Custo da unidade</small><b id="pr-custo">–</b></div><div class="kpi"><small>Preço sugerido</small><b id="pr-sug">–</b></div>' +
+    '<div class="kpi"><small>Sobra por unidade</small><b id="pr-lucro">–</b></div><div class="kpi"><small>Custo sobre o preço</small><b id="pr-cmv">–</b></div><div class="kpi"><small>Margem líquida</small><b id="pr-mg">–</b></div></div>' +
+    '<p class="nota" id="pr-ver"></p>' +
+    '<div class="row" style="margin-top:12px"><button class="btn" data-act="prSalva">Salvar na tabela de preços</button><button class="btn sec" data-act="prUsaSug">Usar o preço sugerido</button><button class="btn sec" data-act="prLimpa">Limpar</button></div></div>';
+  return h;
 }
 
-/* ---------- itens ---------- */
-function renderItens(){
-  $('inCat').innerHTML = S.cats.map(c => `<option>${esc(c)}</option>`).join('');
-  $('listaCats').innerHTML = S.cats.map(c => `<div class="linha"><span class="n">${esc(c)}</span><button class="x" data-delcat="${esc(c)}">Remover</button></div>`).join('');
-  $('listaItens').innerHTML = S.itens.length ? S.itens.map(i => `
-    <div class="linha"><div class="n">${esc(i.n)}<br><small>${esc(i.c)} · ${brl(num(i.p))}</small></div>
-    <button class="x" data-delitem="${esc(i.id)}">Remover</button></div>`).join('') : '<p class="note">Nenhum item.</p>';
-  $('cfMeta').value = S.meta; $('cfDias').value = S.dias;
+/* ---------- desenho ---------- */
+var ABAS = [['hoje','Hoje','<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>'],
+            ['mes','Mês','<path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/>'],
+            ['produtos','Produtos','<path d="M20 12l-8 8-9-9V3h8z"/><circle cx="7.5" cy="7.5" r="1.2"/>'],
+            ['preco','Precificar','<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h1M12 12h1M16 12h0M8 16h1M12 16h1M16 16h0"/>'],
+            ['contas','Contas','<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/>']];
+var pendRender = false, rt = 0;
+function agendaRender(){
+  var a = document.activeElement;
+  if (a && a !== document.body && $('#app').contains(a) && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName) && a.type !== 'checkbox') { pendRender = true; return; }
+  clearTimeout(rt); rt = setTimeout(render, 30);
 }
-
 function render(){
-  const on = document.querySelector('section.on').id;
-  ({vender: renderVender, hoje: renderHoje, mes: renderMes, itens: renderItens})[on]();
+  pendRender = false;
+  var m = $('#modo'); m.textContent = S.modo === 'nuvem' ? 'salvo na nuvem' : S.modo === 'local' ? 'salvo neste aparelho' : 'carregando…'; m.className = 'modo ' + S.modo;
+  $('#abas').innerHTML = ABAS.map(function (a) { return '<button data-act="aba" data-v="' + a[0] + '" aria-selected="' + (S.aba === a[0]) + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + a[2] + '</svg>' + a[1] + '</button>'; }).join('');
+  var carregando = COLS.some(function (c) { return !S.carregou[c]; });
+  var h = carregando ? '<div class="card"><p class="nota">Carregando os dados da loja…</p></div>' : S.aba === 'hoje' ? vHoje() : S.aba === 'mes' ? vMes() : S.aba === 'produtos' ? vProdutos() : S.aba === 'preco' ? vPreco() : vContas();
+  var st = { x: window.scrollX, y: window.scrollY };
+  $('#app').innerHTML = h;
+  if (S.aba === 'produtos' && S.ed) atualizaEd();
+  if (S.aba === 'preco') atualizaPr();
+  window.scrollTo(st.x, st.y);
 }
+document.addEventListener('focusout', function () { if (pendRender) setTimeout(function () { if (pendRender) agendaRender(); }, 60); });
 
-/* ---------- baixar ---------- */
-function baixa(nome, conteudo, tipo){
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([conteudo], {type: tipo}));
-  a.download = nome; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+/* ---------- ações ---------- */
+function docDia(){ var d = S.dia; if (!S.vendas[d]) S.vendas[d] = { data:d, linhas:[], folga:false, obs:'' }; if (!S.vendas[d].linhas) S.vendas[d].linhas = []; return S.vendas[d]; }
+function gravaDia(){ Store.salvar('vendas/' + S.dia, S.vendas[S.dia]); }
+function vende(id){
+  var p = S.produtos[id]; if (!p) return; var doc = docDia();
+  var ex = doc.linhas.filter(function (l) { return l.pid === id && l.pag === S.pag && num(l.preco) === num(p.preco) && num(l.custo) === num(p.custo); })[0];
+  if (ex) ex.qtd = num(ex.qtd) + 1; else doc.linhas.push({ id:uid(), pid:id, nome:p.nome, cat:p.cat || '', qtd:1, preco:num(p.preco), custo:num(p.custo), pag:S.pag, est:!p.custoReal });
+  gravaDia(); render();
 }
-const csvCell = s => '"' + String(s).replace(/"/g, '""') + '"';
-
-/* ---------- cliques ---------- */
-document.addEventListener('click', e => {
-  const t = e.target.closest('button'); if (!t) return;
-  const d = t.dataset;
-  if (d.cat !== undefined) { st.cat = d.cat; renderVender(); }
-  else if (d.item) { const i = S.itens.find(x => x.id === d.item); if (i) addCart(i.id, i.n, num(i.p)); }
-  else if (d.inc !== undefined) { st.cart[+d.inc].qtd++; renderCart(); }
-  else if (d.dec !== undefined) { const l = st.cart[+d.dec]; if (--l.qtd <= 0) st.cart.splice(+d.dec, 1); renderCart(); }
-  else if (d.pag) finalizar(d.pag);
-  else if (d.del) { if (confirm('Desfazer esta venda?')) { S.vendas = S.vendas.filter(v => v.id !== d.del); save(); renderHoje(); } }
-  else if (d.delitem) { S.itens = S.itens.filter(i => i.id !== d.delitem); save(); renderItens(); }
-  else if (d.delcat) {
-    if (S.itens.some(i => i.c === d.delcat)) return toast('Tem itens nesta categoria');
-    S.cats = S.cats.filter(c => c !== d.delcat); save(); renderItens();
-  }
-  else if (d.act === 'livre') {
-    const v = num($('livre').value); if (v <= 0) return toast('Digite um valor');
-    addCart('livre-' + v + '-' + st.cat, 'Outros (' + (st.cat || 'sem categoria') + ')', v); $('livre').value = '';
-  }
-  else if (d.act === 'limpar') { st.cart = []; $('recebido').value = ''; renderCart(); }
-  else if (d.act === 'addItem') {
-    const n = $('inNome').value.trim(), p = num($('inPreco').value);
-    if (!n || p <= 0 || !S.cats.length) return toast('Preencha nome, preço e categoria');
-    S.itens.push({id: uid(), n, p: String(p), c: $('inCat').value}); save();
-    $('inNome').value = ''; $('inPreco').value = ''; renderItens(); toast('Item adicionado');
-  }
-  else if (d.act === 'addCat') {
-    const c = $('inNovaCat').value.trim();
-    if (!c || S.cats.includes(c)) return toast('Nome inválido ou já existe');
-    S.cats.push(c); save(); $('inNovaCat').value = ''; renderItens();
-  }
-  else if (d.act === 'csv') {
-    const linhas = ['data;hora;pagamento;total;itens'].concat(S.vendas.map(v =>
-      [v.data, v.hora, pagNome(v.pag), String(v.total).replace('.', ','), csvCell(v.itens.map(i => i.qtd + 'x ' + i.nome).join(' | '))].join(';')));
-    baixa('vendas-pdv.csv', '﻿' + linhas.join('\n'), 'text/csv');
-  }
-  else if (d.act === 'json') baixa('backup-pdv-' + hoje() + '.json', JSON.stringify(S, null, 2), 'application/json');
+function novoEd(p){
+  S.ed = p ? { id:p.id, nome:p.nome || '', cat:p.cat || CATS[0], custo:String(p.custo != null ? p.custo : ''), preco:String(p.preco != null ? p.preco : ''), custoReal:!!p.custoReal, ativo:p.ativo !== false, ings:clone(p.ings || []), alvo:'55', apagar:false }
+           : { id:null, nome:'', cat:CATS[0], custo:'', preco:'', custoReal:false, ativo:true, ings:[], alvo:'55', apagar:false };
+}
+function lerEd(){
+  var e = S.ed; if (!e) return;
+  [['nome','ed-nome'],['cat','ed-cat'],['custo','ed-custo'],['preco','ed-preco'],['alvo','ed-alvo']].forEach(function (p) { var el = document.getElementById(p[1]); if (el) e[p[0]] = el.value; });
+  var r = document.getElementById('ed-real'), a = document.getElementById('ed-ativo'); if (r) e.custoReal = r.checked; if (a) e.ativo = a.checked;
+  document.querySelectorAll('#editor [data-i]').forEach(function (el) { var g = e.ings[+el.dataset.i]; if (g && el.dataset.k) g[el.dataset.k] = el.value; });
+}
+function atualizaEd(){
+  var e = S.ed; if (!e) return; var custo = num(e.custo), preco = num(e.preco), mg = preco > 0 ? (preco - custo) / preco * 100 : 0, alvo = Math.min(95, num(e.alvo));
+  var set = function (id, t, cls) { var el = document.getElementById(id); if (el) { el.textContent = t; if (cls != null) el.className = cls; } };
+  set('ed-mg', pc(mg, 1), mg >= 45 ? 'ok' : mg >= 30 ? 'warn' : 'bad'); set('ed-sobra', brl(preco - custo));
+  set('ed-sug', alvo > 0 ? brl(arred05(custo / (1 - alvo / 100))) : '–'); set('ed-calc', brl(ingCusto(e.ings)));
+}
+function baixar(nome, texto, tipo){
+  var a = document.createElement('a'), url = URL.createObjectURL(new Blob([texto], { type:tipo }));
+  a.href = url; a.download = nome; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+}
+function exporta(){
+  var linhas = ['data;produto;categoria;qtd;preco;custo;pagamento;total;sobra'];
+  Object.keys(S.vendas).sort().forEach(function (d) { var doc = S.vendas[d]; (doc.linhas || []).forEach(function (l) { var t = linhaT(l);
+    linhas.push([d, '"' + String(l.nome).replace(/"/g, '""') + '"', l.cat || '', num(l.qtd), String(num(l.preco)).replace('.', ','), String(num(l.custo)).replace('.', ','), l.pag, String(+t.rec.toFixed(2)).replace('.', ','), String(+(t.rec - t.cus - t.tax).toFixed(2)).replace('.', ',')].join(';')); }); });
+  baixar('vendas-anne.csv', '\ufeff' + linhas.join('\n'), 'text/csv'); avisar('Planilha baixada.');
+}
+function backup(){
+  baixar('backup-anne-' + hoje() + '.json', JSON.stringify({ gerado:new Date().toISOString(), produtos:S.produtos, vendas:S.vendas, config:S.config, historico:S.historico }, null, 1), 'application/json');
+  avisar('Backup baixado.');
+}
+function restaura(arq){
+  if (!arq) return;
+  var rd = new FileReader();
+  rd.onload = function () {
+    var d; try { d = JSON.parse(rd.result); } catch (e) { avisar('Esse arquivo não é um backup válido.'); return; }
+    if (!d || typeof d.produtos !== 'object' || typeof d.vendas !== 'object') { avisar('Esse arquivo não parece um backup desta calculadora.'); return; }
+    if (!confirm('Restaurar vai SUBSTITUIR tudo que está neste aparelho pelo conteúdo do backup. Continuar?')) return;
+    COLS.forEach(function (c) { S[c] = (d[c] && typeof d[c] === 'object') ? d[c] : {}; });
+    Store.loc = { produtos:S.produtos, vendas:S.vendas, config:S.config, historico:S.historico };
+    try { localStorage.setItem('anne_nuvem_local', JSON.stringify(Store.loc)); } catch (e) { avisar('Não consegui salvar neste aparelho.'); return; }
+    S.ed = null; S.pr = null; render(); avisar('Backup restaurado.');
+  };
+  rd.readAsText(arq);
+}
+document.addEventListener('click', function (ev) {
+  var b = ev.target.closest('[data-act]'); if (!b || !$('#app').parentNode.contains(b)) return;
+  var act = b.dataset.act, v = b.dataset.v, id = b.dataset.id, doc, i;
+  if (act === 'aba') { S.aba = v; S.ed = null; render(); window.scrollTo(0, 0); return; }
+  if (act === 'pag') { S.pag = v; render(); return; }
+  if (act === 'cat') { S.cat = v; render(); return; }
+  if (act === 'pcat') { S.pCat = v; render(); return; }
+  if (act === 'dia') { S.dia = v === 'hoje' ? hoje() : iso(new Date(new Date(S.dia + 'T12:00:00').getTime() + (+v) * 86400000)); render(); return; }
+  if (act === 'vende') { vende(id); return; }
+  if (act === 'mais' || act === 'menos') { doc = docDia(); var l = doc.linhas.filter(function (x) { return x.id === id; })[0]; if (!l) return;
+    l.qtd = num(l.qtd) + (act === 'mais' ? 1 : -1); if (l.qtd <= 0) doc.linhas = doc.linhas.filter(function (x) { return x.id !== id; }); gravaDia(); render(); return; }
+  if (act === 'apagaLinha') { doc = docDia(); doc.linhas = doc.linhas.filter(function (x) { return x.id !== id; }); gravaDia(); render(); return; }
+  if (act === 'addAvulso') {
+    var nome = ($('#av-nome').value || '').trim(), preco = num($('#av-preco').value), qtd = num($('#av-qtd').value) || 1, cs = $('#av-custo').value.trim();
+    if (!nome || preco <= 0) { avisar('Informe o nome e o preço.'); return; }
+    doc = docDia(); doc.linhas.push({ id:uid(), pid:'', nome:nome, cat:'Outros', qtd:qtd, preco:preco, custo:cs ? num(cs) : +(preco * 0.5).toFixed(2), pag:S.pag, est:!cs });
+    gravaDia(); render(); avisar('Venda adicionada.'); return; }
+  if (act === 'novoProd') { novoEd(null); render(); return; }
+  if (act === 'editaProd') { var p = S.produtos[id]; if (!p) return; novoEd(Object.assign({ id:id }, p)); render(); var el = document.getElementById('editor'); if (el) el.scrollIntoView({ block:'center' }); return; }
+  if (act === 'fechaEd') { S.ed = null; render(); return; }
+  if (act === 'addIng') { lerEd(); S.ed.ings.push({ n:'', preco:'', emb:'', uso:'' }); render(); return; }
+  if (act === 'rmIng') { lerEd(); S.ed.ings.splice(+b.dataset.i, 1); render(); return; }
+  if (act === 'usaCusto') { lerEd(); S.ed.custo = String(+ingCusto(S.ed.ings).toFixed(2)).replace('.', ','); render(); return; }
+  if (act === 'salvaProd') {
+    lerEd(); var e = S.ed; if (!e.nome.trim()) { avisar('Informe o nome do produto.'); return; }
+    var pid = e.id || uid(), obj = { nome:e.nome.trim(), cat:e.cat, custo:num(e.custo), preco:num(e.preco), custoReal:!!e.custoReal, ativo:e.ativo !== false, ings:e.ings.filter(function (g) { return g.n || g.preco; }) };
+    S.produtos[pid] = obj; Store.salvar('produtos/' + pid, obj); S.ed = null; render(); avisar('Produto salvo.'); return; }
+  if (act === 'apagaProd') { lerEd(); if (!S.ed.apagar) { S.ed.apagar = true; render(); return; } var pid2 = S.ed.id; delete S.produtos[pid2]; Store.salvar('produtos/' + pid2, null); S.ed = null; render(); avisar('Produto apagado.'); return; }
+  if (act === 'addFixo') { var c = cfg(); c.fixos = c.fixos.concat([{ id:uid(), nome:'', valor:0 }]); salvaCfg(c); render(); return; }
+  if (act === 'rmFixo') { var c2 = cfg(); c2.fixos = c2.fixos.filter(function (_, k) { return k !== +b.dataset.i; }); salvaCfg(c2); render(); return; }
+  if (act === 'prAddIng') { lerPr(); S.pr.ings.push({ n:'', preco:'', emb:'', uso:'' }); render(); return; }
+  if (act === 'prRmIng') { lerPr(); S.pr.ings.splice(+b.dataset.i, 1); if (!S.pr.ings.length) S.pr.ings.push({ n:'', preco:'', emb:'', uso:'' }); render(); return; }
+  if (act === 'prLimpa') { prNovo(); render(); return; }
+  if (act === 'prUsaSug') { lerPr(); S.pr.preco = String(arred05(ingCusto(S.pr.ings) * num(S.pr.fator))).replace('.', ','); render(); return; }
+  if (act === 'prSalva') {
+    lerPr(); var pr = S.pr; if (!pr.nome.trim()) { avisar('Informe o nome do produto.'); return; }
+    var custoPr = +ingCusto(pr.ings).toFixed(2); if (!(custoPr > 0)) { avisar('Informe pelo menos um ingrediente com preço e quantidade.'); return; }
+    var pid3 = pr.id || uid(), ant = S.produtos[pid3] || {};
+    var obj3 = Object.assign({}, ant, { nome:pr.nome.trim(), cat:pr.cat, custo:custoPr, preco:num(pr.preco), custoReal:true, ativo:ant.ativo !== false, ings:pr.ings.filter(function (g) { return g.n || g.preco; }) });
+    S.produtos[pid3] = obj3; Store.salvar('produtos/' + pid3, obj3); pr.id = pid3; render(); avisar('Salvo na tabela de preços.'); return; }
+  if (act === 'abreDia') { S.dia = v; S.aba = 'hoje'; render(); window.scrollTo(0, 0); return; }
+  if (act === 'backup') { backup(); return; }
+  if (act === 'restaura') { $('#arq').click(); return; }
+  if (act === 'exporta') { exporta(); return; }
 });
-$('recebido').oninput = renderCart;
-$('cfMeta').oninput = e => { S.meta = e.target.value; save(); };
-$('cfDias').oninput = e => { S.dias = e.target.value; save(); };
+document.addEventListener('input', function (ev) {
+  var t = ev.target;
+  if (t.dataset.f === 'busca') { S.busca = t.value; var doc = S.vendas[S.dia] || { linhas:[] }, q = {}; (doc.linhas || []).forEach(function (l) { q[l.pid] = (q[l.pid] || 0) + num(l.qtd); });
+    var b = norm(S.busca); $('#prods').innerHTML = gradeProd(prodLista().filter(function (p) { return p.ativo !== false && (S.cat === 'Todos' || p.cat === S.cat) && (!b || norm(p.nome).indexOf(b) >= 0); }), q); return; }
+  if (t.dataset.f === 'pBusca') { S.pBusca = t.value; clearTimeout(rt); rt = setTimeout(function () { var pos = t.selectionStart; render(); var n = $('#pbusca'); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (e) {} } }, 200); return; }
+  if (t.dataset.pr && t.closest('#prbox')) { lerPr(); atualizaPr(); return; }
+  if (t.dataset.e || (t.dataset.i && t.closest('#editor'))) { lerEd(); atualizaEd(); return; }
+  if (t.dataset.c === 'taxa' || t.dataset.c === 'geral' || t.dataset.c === 'fixo') { guardaConta(t); return; }
+  if (t.id === 'tx-c' || t.id === 'tx-r') { var c = num($('#tx-c').value), r = num($('#tx-r').value), el = $('#tx-res');
+    el.textContent = (c > 0 && r > 0 && r <= c) ? 'Taxa: ' + brl(c - r) + ' (' + pc((c - r) / c * 100, 2) + ')' + (c < 20 ? '. Valor pequeno: os centavos arredondam, teste com uma venda maior.' : '.') : 'Preencha os dois valores. Use uma venda acima de R$ 30 para o resultado ser preciso.'; return; }
+  if (t.dataset.f === 'obs') { var d = docDia(); d.obs = t.value; gravaDia(); }
+});
+function guardaConta(t){
+  var c = cfg(), k = t.dataset.k;
+  if (t.dataset.c === 'taxa') c.taxas[k] = num(t.value);
+  else if (t.dataset.c === 'geral') c[k] = num(t.value);
+  else { var f = c.fixos[+t.dataset.i]; if (f) f[k] = k === 'valor' ? num(t.value) : t.value; var el = document.getElementById('totfx'); if (el) el.textContent = brl(c.fixos.reduce(function (s, x) { return s + num(x.valor); }, 0)); }
+  salvaCfg(c);
+}
+document.addEventListener('change', function (ev) {
+  var t = ev.target, f = t.dataset.f;
+  if (f === 'restaura') { restaura(t.files && t.files[0]); t.value = ''; }
+  else if (f === 'dia' && t.value) { S.dia = t.value; render(); }
+  else if (f === 'mes' && t.value) { S.mes = t.value; render(); }
+  else if (f === 'folga') { var d = docDia(); d.folga = t.checked; gravaDia(); render(); }
+  else if (f === 'pagLinha') { var doc = docDia(), l = doc.linhas.filter(function (x) { return x.id === t.dataset.id; })[0]; if (l) { l.pag = t.value; gravaDia(); render(); } }
+  else if (f === 'prSel') { prAbre(t.value); }
+  else if (t.dataset.pr === 'cat') { lerPr(); S.pr.fator = S.pr.cat === 'Empório' ? '1,5' : '2,2'; render(); }
+  else if (t.dataset.e === 'custoReal' || t.dataset.e === 'ativo') { lerEd(); }
+});
 
 render();
-
-if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
-}
+Store.init();
+// Grava na hora o que ainda estava esperando o atraso, quando o app sai da tela.
+function guardaTudo(){ Object.keys(Store.pend).forEach(function (p) { clearTimeout(Store.tm[p]); Store.enviar(p); }); }
+document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') guardaTudo(); });
+window.addEventListener('pagehide', guardaTudo);
+if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {});
+if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register('sw.js').catch(function () {});
+})();
 </script>
 </body>
 </html>
